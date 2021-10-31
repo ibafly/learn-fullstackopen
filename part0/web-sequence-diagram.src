@@ -1,0 +1,33 @@
+title After the user creates a new note\non page https://studies.cs.helsinki.fi/exampleapp/notes
+# 0.4: new note
+
+broswer -> server : HTTP POST form data https://studies.cs.helsinki.fi/exampleapp/new_note
+server --> broswer : 302 redirect https://studies.cs.helsinki.fi/exampleapp/notes
+broswer -> server : HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server --> broswer : HTML code
+broswer -> server : HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server -> broswer : CSS code
+broswer -> server : HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server -> broswer : JS code
+broswer -> server : HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server -> broswer : json string
+
+
+title After the user visit the note SPA\non https://studies.cs.helsinki.fi/exampleapp/spa
+# 0.5: single page app
+
+broswer -> server : HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server --> broswer : HTML code
+broswer -> server : HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server -> broswer : CSS code
+broswer -> server : HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server -> broswer : JS code
+broswer -> server : HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server -> broswer : json data
+
+
+title After the user creates a new note\non SPA https://studies.cs.helsinki.fi/exampleapp/spa
+# 0.6: new note (on single page app)
+
+broswer -> server : HTTP POST form data https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server --> broswer : json data {"message": "note created"}

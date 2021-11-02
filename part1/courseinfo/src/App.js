@@ -1,5 +1,21 @@
 import React from "react"
 
+const Header = props => <h1>{props.text}</h1>
+
+const Content = props =>
+  props.parts.map(i => (
+    <p>
+      {i.part} {i.exercise}
+    </p>
+  ))
+
+const Total = props => (
+  <p>
+    Number of exercises{" "}
+    {props.exercises.reduce((partial_sum, i) => partial_sum + i, 0)}
+  </p>
+)
+
 const App = () => {
   const course = "Half Stack application development"
   const part1 = "Fundamentals of React"
@@ -11,17 +27,15 @@ const App = () => {
 
   return (
     <div>
-      <h1>{course}</h1>
-      <p>
-        {part1} {exercise1}
-      </p>
-      <p>
-        {part2} {exercise2}
-      </p>
-      <p>
-        {part3} {exercise3}
-      </p>
-      <p>Number of exercises {exercise1 + exercise2 + exercise3}</p>
+      <Header text={course}></Header>
+      <Content
+        parts={[
+          { part: part1, exercise: exercise1 },
+          { part: part2, exercise: exercise2 },
+          { part: part3, exercise: exercise3 },
+        ]}
+      ></Content>
+      <Total exercises={[exercise1, exercise2, exercise3]}></Total>
     </div>
   )
 }

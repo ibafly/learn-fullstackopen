@@ -3,11 +3,13 @@ import React from "react"
 const Header = props => <h1>{props.text}</h1>
 
 const Content = props =>
-  props.parts.map(i => (
-    <p>
-      {i.part} {i.exercise}
-    </p>
-  ))
+  props.parts.map(i => <Part part={i.part} exercise={i.exercise} />)
+
+const Part = props => (
+  <p>
+    {props.part} {props.exercise}
+  </p>
+)
 
 const Total = props => (
   <p>

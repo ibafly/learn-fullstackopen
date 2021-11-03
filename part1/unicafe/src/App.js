@@ -7,9 +7,9 @@ const Title = ({ tag, text }) => {
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
-const Total = ({ sum, text }) => (
+const Total = ({ value, text }) => (
   <p>
-    {text} {sum}
+    {text} {value}
   </p>
 )
 
@@ -27,9 +27,12 @@ const App = () => {
       <Button onClick={increaseByOne(neutral, setNeutral)} text="neutral" />
       <Button onClick={increaseByOne(bad, setBad)} text="bad" />
       <Title tag="h2" text="statistics" />
-      <Total sum={good} text="good" />
-      <Total sum={neutral} text="neutral" />
-      <Total sum={bad} text="bad" />
+      <Total value={good} text="good" />
+      <Total value={neutral} text="neutral" />
+      <Total value={bad} text="bad" />
+      <Total value={good + neutral + bad} text="all" />
+      <Total value={(good - bad) / (good + neutral + bad)} text="average" />
+      <Total value={good / (good + neutral + bad)} text="postive" />
     </div>
   )
 }

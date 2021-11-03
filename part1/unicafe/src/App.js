@@ -7,18 +7,27 @@ const Title = ({ tag, text }) => {
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
+const LineStatistic = ({ value, text }) => (
+  <p>
+    {text} {value}
+  </p>
+)
+
 const Statistics = ({ valueObj }) => {
   const { good, neutral, bad } = valueObj
   if (good === 0 && neutral === 0 && bad === 0) return <p>No feedback given</p>
   else
     return (
       <>
-        <p>good {good}</p>
-        <p>neutral {neutral}</p>
-        <p>bad {bad}</p>
-        <p>all {good + neutral + bad}</p>
-        <p>average {(good - bad) / (good + neutral + bad)}</p>
-        <p>postive {good / (good + neutral + bad)}</p>
+        <LineStatistic value={good} text="good" />
+        <LineStatistic value={neutral} text="neutral" />
+        <LineStatistic value={bad} text="bad" />
+        <LineStatistic value={good + neutral + bad} text="all" />
+        <LineStatistic
+          value={(good - bad) / (good + neutral + bad)}
+          text="average"
+        />
+        <LineStatistic value={good / (good + neutral + bad)} text="positive" />
       </>
     )
 }

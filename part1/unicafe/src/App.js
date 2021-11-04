@@ -8,9 +8,10 @@ const Title = ({ tag, text }) => {
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
 const LineStatistic = ({ value, text }) => (
-  <p>
-    {text} {value}
-  </p>
+  <tr>
+    <th>{text} </th>
+    <td>{value}</td>
+  </tr>
 )
 
 const Statistics = ({ valueObj }) => {
@@ -18,7 +19,7 @@ const Statistics = ({ valueObj }) => {
   if (good === 0 && neutral === 0 && bad === 0) return <p>No feedback given</p>
   else
     return (
-      <>
+      <table>
         <LineStatistic value={good} text="good" />
         <LineStatistic value={neutral} text="neutral" />
         <LineStatistic value={bad} text="bad" />
@@ -28,7 +29,7 @@ const Statistics = ({ valueObj }) => {
           text="average"
         />
         <LineStatistic value={good / (good + neutral + bad)} text="positive" />
-      </>
+      </table>
     )
 }
 

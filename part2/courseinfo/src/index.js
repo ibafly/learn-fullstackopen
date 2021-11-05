@@ -30,7 +30,8 @@ const Part = ({ name, exercises }) => {
 }
 
 const Total = ({ parts }) => {
-  const sum = parts.reduce((iSum, part, i, arr) => iSum + part.exercises, 0)
+  // const sum = parts.reduce((iSum, part, i, arr) => iSum + part.exercises, 0)
+  const sum = parts.reduce((iSum, part) => iSum + part.exercises, 0)
   return <p>Number of exercises {sum}</p>
 }
 

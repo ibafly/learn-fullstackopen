@@ -1,68 +1,65 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react"
+import ReactDOM from "react-dom"
 
-const Header = ({ course }) => {
+const Course = ({ course }) => {
   return (
-    <h1>{course.name}</h1>
+    <div>
+      <Header name={course.name} />
+      <Content parts={course.parts} />
+    </div>
+  )
+}
+
+const Header = ({ name }) => {
+  return <h1>{name}</h1>
+}
+
+const Content = ({ parts }) => {
+  return parts.map(part => (
+    <Part key={part.id} name={part.name} exercises={part.exercises} />
+  ))
+}
+
+const Part = ({ name, exercises }) => {
+  return (
+    <p>
+      {name} {exercises}
+    </p>
   )
 }
 
 const Total = ({ course }) => {
-  const sum = course.parts[0].exercises + course.parts[1].exercises + course.parts[2].exercises
-  return(
-    <p>Number of exercises {sum}</p>
-  ) 
-}
-
-const Part = (props) => {
-  return (
-    <p>
-      {props.part.name} {props.part.exercises}
-    </p>    
-  )
-}
-
-const Content = ({ course }) => {
-  return (
-    <div>
-      <Part part={course.parts[0]} />
-      <Part part={course.parts[1]} />
-      <Part part={course.parts[2]} />
-    </div>
-  )
+  const sum =
+    course.parts[0].exercises +
+    course.parts[1].exercises +
+    course.parts[2].exercises
+  return <p>Number of exercises {sum}</p>
 }
 
 const App = () => {
   const course = {
-	  id: 1,
-    name: 'Half Stack application development',
+    id: 1,
+    name: "Half Stack application development",
     parts: [
       {
-        name: 'Fundamentals of React',
+        name: "Fundamentals of React",
         exercises: 10,
-		  id: 1
+        id: 1,
       },
       {
-        name: 'Using props to pass data',
+        name: "Using props to pass data",
         exercises: 7,
-		  id:2
+        id: 2,
       },
       {
-        name: 'State of a component',
+        name: "State of a component",
         exercises: 14,
-		  id:3
-      }
-    ]
+        id: 3,
+      },
+    ],
   }
 
-//	return <Course course={course} />
-  return (
-    <div>
-      <Header course={course} />
-      <Content course={course} />
-      <Total course={course} />
-    </div>
-  )
+  return <Course course={course} />
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById("root"))

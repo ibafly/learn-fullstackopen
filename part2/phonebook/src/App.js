@@ -1,35 +1,52 @@
 import React, { useState } from "react"
 
-const Person = ({ person }) => <p>{person.name}</p>
+const Person = ({ person }) => (
+  <p>
+    {person.name} {person.number}
+  </p>
+)
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }])
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", number: "040-1234567" },
+  ])
   const [newName, setNewName] = useState("")
+  const [newNumber, setNewNumber] = useState("")
 
   const followNewNameInput = event => {
     setNewName(event.target.value)
   }
-  const addPersonName = event => {
+
+  const followNewNumberInput = event => {
+    setNewNumber(event.target.value)
+  }
+
+  const addPersonInfo = event => {
     event.preventDefault()
 
-    const newNameObj = {
+    const newPersonInfoObj = {
       name: newName,
+      number: newNumber,
     }
     persons.find(
       person => person.name.toLocaleLowerCase() === newName.toLocaleLowerCase()
     )
       ? alert(`${newName} is already added to phonebook`)
-      : setPersons(persons.concat(newNameObj))
+      : setPersons(persons.concat(newPersonInfoObj))
 
     setNewName("")
+    setNewNumber("")
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addPersonName}>
+      <form onSubmit={addPersonInfo}>
         <div>
           name: <input value={newName} onChange={followNewNameInput} />
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={followNewNumberInput} />
         </div>
         <div>
           <button type="submit">add</button>

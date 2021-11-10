@@ -1,18 +1,25 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
+import axios from "axios"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-1234567" },
-    { name: "abc", number: "040-1234567" },
-    { name: "cuhj", number: "040-1234567" },
-    { name: "ArtosHellas", number: "040-1234567" },
+    { name: "setPersons", number: "040-1234567" },
+    { name: "setState", number: "040-1234567" },
+    { name: "initial", number: "040-1234567" },
+    { name: "data", number: "040-1234567" },
   ])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [newQuery, setNewQuery] = useState("")
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/persons").then(res => {
+      setPersons(res.data)
+    })
+  }, [])
 
   const shownPersons = persons.filter(person =>
     person.name.toLocaleLowerCase().includes(newQuery.toLocaleLowerCase())

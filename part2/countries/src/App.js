@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
 
+const CountryEntry = ({ country, onClick, toggle, currentidx }) => {
+  return (
+    <li currentidx={currentidx}>
+      {country.name.common}&nbsp;
+      <button onClick={onClick}>show</button>
+      {toggle && <CountryDetail key={country.cca2} country={country} />}
+    </li>
+  )
+}
 const CountryDetail = ({ country }) => {
   return (
     <div>
@@ -25,6 +34,7 @@ const CountryDetail = ({ country }) => {
 const App = () => {
   const [countries, setCountries] = useState([])
   const [newQuery, setNewQuery] = useState("")
+  const [detailToggles, setDetailToggles] = useState([])
 
   useEffect(() => {
     axios
@@ -37,16 +47,35 @@ const App = () => {
       })
   }, [])
 
-  const filteredEntries = countries.filter(country =>
-    country.name.common
-      .toLocaleLowerCase()
-      .includes(newQuery.toLocaleLowerCase())
-  )
-
+  const filteredEntries = newQuery
+    ? countries.filter(country =>
+        country.name.common
+          .toLocaleLowerCase()
+          .includes(newQuery.toLocaleLowerCase())
+      )
+    : []
   const sumOfEntries = filteredEntries.length
 
   const followNewQueryInput = event => {
     setNewQuery(event.target.value)
+    setDetailToggles([])
+  }
+
+  const changeToggle = event => {
+    // if (detailToggles) {
+    //   console.log(sumOfEntries, detailToggles)
+    //   const allZeroArr = Array(sumOfEntries).fill("0")
+    //   // setDetailToggles(Array(sumOfEntries).fill(0))
+    //   setDetailToggles([...allZeroArr])
+    //   console.log("in IF", detailToggles)
+    // } else {
+    // NO NEED to init to a all zero array!
+    const idx = event.target.closest("li").getAttribute("currentidx")
+    const togglesCopy = [...detailToggles]
+    togglesCopy[idx] = !togglesCopy[idx]
+    setDetailToggles([...togglesCopy])
+    // console.log("in ELSE", detailToggles)
+    // }
   }
 
   return (
@@ -58,12 +87,18 @@ const App = () => {
       {sumOfEntries > 10 && <p>Too many matches, specify another filter</p>}
       {sumOfEntries <= 10 &&
         sumOfEntries > 1 &&
-        filteredEntries.map(country => (
-          <p key={country.cca2}>{country.name.common}</p>
+        filteredEntries.map((country, i) => (
+          <CountryEntry
+            key={country.cca2}
+            country={country}
+            onClick={changeToggle}
+            toggle={detailToggles[i]}
+            currentidx={i} // currentidx is a normal DOM custom attribute, so in /all lowercase
+          />
         ))}
       {sumOfEntries === 1 && (
         <CountryDetail
-          key={filteredEntries[0].tld.cca2}
+          key={filteredEntries[0].cca2}
           country={filteredEntries[0]}
         />
       )}

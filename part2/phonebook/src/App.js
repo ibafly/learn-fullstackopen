@@ -4,12 +4,14 @@ import personService from "./services/persons"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
+import Notification from "./components/Notification"
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [newQuery, setNewQuery] = useState("")
+  const [okMsg, setOkMsg] = useState(null)
 
   useEffect(() => {
     personService
@@ -21,6 +23,12 @@ const App = () => {
         console.log("axios.get fails")
       })
   }, [])
+
+  function setMsgToNullLater() {
+    setTimeout(() => {
+      setOkMsg(null)
+    }, 5000)
+  }
 
   const shownPersons = persons.filter(person =>
     person.name.toLocaleLowerCase().includes(newQuery.toLocaleLowerCase())
@@ -62,6 +70,8 @@ const App = () => {
             )
 
             setPersons(newPersons)
+            setOkMsg("Updated number of " + foundPerson.name)
+            setMsgToNullLater()
           })
           .catch(err => {
             console.log("PUT failed")
@@ -70,6 +80,8 @@ const App = () => {
           .create(newPersonInfoObj)
           .then(returnedPerson => {
             setPersons(persons.concat(returnedPerson))
+            setOkMsg("Added " + returnedPerson.name)
+            setMsgToNullLater()
           })
           .catch(err => {
             console.log("axios.post add new fails")
@@ -103,6 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={okMsg} />
       <Filter
         inputType="search"
         inputVal={newQuery}

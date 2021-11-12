@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
-import axios from "axios"
+//import axios from "axios" // goes to services module
+import personService from "./services/persons"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
@@ -16,11 +17,11 @@ const App = () => {
   const [newQuery, setNewQuery] = useState("")
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(res => {
-        console.log(res.data)
-        setPersons(res.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        console.log(initialPersons)
+        setPersons(initialPersons)
       })
       .catch(err => {
         console.log("axios.get fails")
@@ -55,10 +56,10 @@ const App = () => {
       person => person.name.toLocaleLowerCase() === newName.toLocaleLowerCase()
     )
       ? alert(`${newName} is already added to phonebook`)
-      : axios
-          .post("http://localhost:3001/persons", newPersonInfoObj)
-          .then(res => {
-            setPersons(persons.concat(newPersonInfoObj))
+      : personService
+          .create(newPersonInfoObj)
+          .then(returnedPerson => {
+            setPersons(persons.concat(returnedPerson))
           })
           .catch(err => {
             console.log("axios.post add new fails")

@@ -6,12 +6,7 @@ import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "setPersons", number: "040-1234567" },
-    { name: "setState", number: "040-1234567" },
-    { name: "initial", number: "040-1234567" },
-    { name: "data", number: "040-1234567" },
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [newQuery, setNewQuery] = useState("")
@@ -20,7 +15,6 @@ const App = () => {
     personService
       .getAll()
       .then(initialPersons => {
-        console.log(initialPersons)
         setPersons(initialPersons)
       })
       .catch(err => {
@@ -52,10 +46,26 @@ const App = () => {
       number: newNumber,
       // date: new Date(), // let server side (not user browser )code generate id and time stamp
     }
-    persons.find(
+
+    const foundPerson = persons.find(
       person => person.name.toLocaleLowerCase() === newName.toLocaleLowerCase()
     )
-      ? alert(`${newName} is already added to phonebook`)
+    foundPerson
+      ? window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        ) &&
+        personService
+          .update(foundPerson.id, newPersonInfoObj)
+          .then(updatedPerson => {
+            const newPersons = persons.map(person =>
+              person.name === foundPerson.name ? updatedPerson : person
+            )
+
+            setPersons(newPersons)
+          })
+          .catch(err => {
+            console.log("PUT failed")
+          })
       : personService
           .create(newPersonInfoObj)
           .then(returnedPerson => {
@@ -70,14 +80,14 @@ const App = () => {
   }
 
   const deletePerson = event => {
-    const keyId = event.target.closest("div").getAttribute("data-id")
+    const id = event.target.closest("div").getAttribute("data-id")
     const nameOfPersonToDelete = event.target
       .closest("div")
       .getAttribute("data-name")
 
     window.confirm("Delete " + nameOfPersonToDelete + "?") &&
       personService
-        .remove(keyId)
+        .remove(id)
         .then(returnedPerson => {
           console.log("DELETE response", returnedPerson) // it's a blank object
           const newPersons = persons.filter(

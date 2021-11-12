@@ -16,9 +16,15 @@ const App = () => {
   const [newQuery, setNewQuery] = useState("")
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then(res => {
-      setPersons(res.data)
-    })
+    axios
+      .get("http://localhost:3001/persons")
+      .then(res => {
+        console.log(res.data)
+        setPersons(res.data)
+      })
+      .catch(err => {
+        console.log("axios.get fails")
+      })
   }, [])
 
   const shownPersons = persons.filter(person =>
@@ -43,12 +49,20 @@ const App = () => {
     const newPersonInfoObj = {
       name: newName,
       number: newNumber,
+      // date: new Date(), // let server side (not user browser )code generate id and time stamp
     }
     persons.find(
       person => person.name.toLocaleLowerCase() === newName.toLocaleLowerCase()
     )
       ? alert(`${newName} is already added to phonebook`)
-      : setPersons(persons.concat(newPersonInfoObj))
+      : axios
+          .post("http://localhost:3001/persons", newPersonInfoObj)
+          .then(res => {
+            setPersons(persons.concat(newPersonInfoObj))
+          })
+          .catch(err => {
+            console.log("axios.post add new fails")
+          })
 
     setNewName("")
     setNewNumber("")

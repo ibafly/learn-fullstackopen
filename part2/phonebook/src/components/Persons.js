@@ -1,11 +1,19 @@
 import React from "react"
 
-const Person = ({ person }) => (
-  <p>
+const Person = ({ person, onClick, dataId }) => (
+  <div data-id={dataId} data-name={person.name}>
     {person.name} {person.number}
-  </p>
+    <button onClick={onClick}>delete</button>
+  </div>
 )
-const Persons = ({ persons }) =>
-  persons.map(person => <Person key={person.name} person={person} />)
+const Persons = ({ persons, btnOnClick }) =>
+  persons.map(person => (
+    <Person
+      key={person.name}
+      dataId={person.id} // i wonder why person.id can be assigned to dataId prop but not key prop. key={person.id} will arise `unique key` error in browser
+      person={person}
+      onClick={btnOnClick}
+    />
+  ))
 
 export default Persons

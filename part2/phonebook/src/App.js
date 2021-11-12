@@ -69,6 +69,27 @@ const App = () => {
     setNewNumber("")
   }
 
+  const deletePerson = event => {
+    const keyId = event.target.closest("div").getAttribute("data-id")
+    const nameOfPersonToDelete = event.target
+      .closest("div")
+      .getAttribute("data-name")
+
+    window.confirm("Delete " + nameOfPersonToDelete + "?") &&
+      personService
+        .remove(keyId)
+        .then(returnedPerson => {
+          console.log("DELETE response", returnedPerson) // it's a blank object
+          const newPersons = persons.filter(
+            person => person.name !== nameOfPersonToDelete
+          )
+          setPersons(newPersons)
+        })
+        .catch(err => {
+          console.log("person DELETE fails")
+        })
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -86,7 +107,7 @@ const App = () => {
         numberInputOnChange={followNewNumberInput}
       />
       <h3>Numbers</h3>
-      <Persons persons={shownPersons} />
+      <Persons persons={shownPersons} btnOnClick={deletePerson} />
     </div>
   )
 }

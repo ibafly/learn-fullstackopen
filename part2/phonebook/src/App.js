@@ -11,7 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [newQuery, setNewQuery] = useState("")
-  const [okMsg, setOkMsg] = useState(null)
+  const [msg, setMsg] = useState(null)
 
   useEffect(() => {
     personService
@@ -20,13 +20,13 @@ const App = () => {
         setPersons(initialPersons)
       })
       .catch(err => {
-        console.log("axios.get fails")
+        console.log("axios.get promise chain failed")
       })
   }, [])
 
   function setMsgToNullLater() {
     setTimeout(() => {
-      setOkMsg(null)
+      setMsg(null)
     }, 5000)
   }
 
@@ -70,21 +70,22 @@ const App = () => {
             )
 
             setPersons(newPersons)
-            setOkMsg("Updated number of " + foundPerson.name)
+            setMsg("Updated number of " + foundPerson.name)
             setMsgToNullLater()
           })
           .catch(err => {
-            console.log("PUT failed")
+            setMsg(foundPerson.name + " has already been removed from server")
+            setMsgToNullLater()
           })
       : personService
           .create(newPersonInfoObj)
           .then(returnedPerson => {
             setPersons(persons.concat(returnedPerson))
-            setOkMsg("Added " + returnedPerson.name)
+            setMsg("Added " + returnedPerson.name)
             setMsgToNullLater()
           })
           .catch(err => {
-            console.log("axios.post add new fails")
+            console.log("axios.post add new promise chain failed")
           })
 
     setNewName("")
@@ -108,14 +109,14 @@ const App = () => {
           setPersons(newPersons)
         })
         .catch(err => {
-          console.log("person DELETE fails")
+          console.log("person DELETE promise chain failed")
         })
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={okMsg} />
+      <Notification message={msg} />
       <Filter
         inputType="search"
         inputVal={newQuery}

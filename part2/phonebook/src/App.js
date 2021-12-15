@@ -20,7 +20,9 @@ const App = () => {
         setPersons(initialPersons)
       })
       .catch(err => {
-        console.log("axios.get promise chain failed")
+//        console.log("axios.get promise chain failed")
+		setMsg(err.response.data.error)
+		setMsgToNullLater()
       })
   }, [])
 
@@ -74,7 +76,8 @@ const App = () => {
             setMsgToNullLater()
           })
           .catch(err => {
-            setMsg(foundPerson.name + " has already been removed from server")
+//            setMsg(foundPerson.name + " has already been removed from server")
+			setMsg(err.response.data.error)
             setMsgToNullLater()
           })
       : personService
@@ -85,7 +88,9 @@ const App = () => {
             setMsgToNullLater()
           })
           .catch(err => {
-            console.log("axios.post add new promise chain failed")
+//            console.log("axios.post add new promise chain failed")
+			setMsg(err.response.data.error)
+			setMsgToNullLater()
           })
 
     setNewName("")
@@ -109,7 +114,9 @@ const App = () => {
           setPersons(newPersons)
         })
         .catch(err => {
-          console.log("person DELETE promise chain failed")
+//          console.log("person DELETE promise chain failed")
+			setMsg(err.response.data.error)
+			setMsgToNullLater()
         })
   }
 

@@ -1,3 +1,5 @@
+const config = require("../utils/config")
+const logger = require("../utils/logger")
 const mongoose = require("mongoose")
 
 const blogSchema = new mongoose.Schema({
@@ -8,8 +10,5 @@ const blogSchema = new mongoose.Schema({
 })
 
 const Blog = mongoose.model("Blog", blogSchema)
-
-const MONGO_URL = process.env.MONGO_URL
-mongoose.connect(MONGO_URL)
 
 module.exports = Blog

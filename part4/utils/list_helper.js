@@ -1,3 +1,5 @@
+const _ = require("lodash")
+
 const dummy = blogs => {
   return 1
 }
@@ -17,4 +19,19 @@ const favoriteBlog = blogs => {
   const biggest = blogs.reduce(reducer, blogs[0])
   return { title: biggest.title, author: biggest.author, likes: biggest.likes }
 }
-module.exports = { dummy, totalLikes, favoriteBlog }
+
+const mostBlogs = blogs => {
+  const authors = blogs.map(ele => ele.author)
+  const counts = _.countBy(authors) // obj
+  const countArr = _.map(counts, (val, key) => {
+    return { author: key, blogs: val }
+  })
+
+  const reducer = (bigger, item) => {
+    return bigger.blogs > item.blogs ? bigger : item
+  }
+  const biggest = countArr.reduce(reducer, countArr[0])
+  return biggest
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }

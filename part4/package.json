@@ -5,7 +5,11 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+	"dev": "nodemon index.js",
+    "deploy": "git push heroku main",
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint .",
+    "test": "jest --verbose"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -14,6 +18,10 @@
     "mongoose": "^6.1.2"
   },
   "devDependencies": {
+    "jest": "^27.4.5",
     "nodemon": "^2.0.15"
+  },
+  "jest": {
+	"testEnvironment": "node"
   }
 }

@@ -34,4 +34,24 @@ const mostBlogs = blogs => {
   return biggest
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
+const mostLikes = blogs => {
+  const counts = _.reduce(
+    blogs,
+    (result, ele, idx) => {
+      result[ele.author] = result[ele.author] + ele.likes || ele.likes
+      return result
+    },
+    {}
+  )
+  const countArr = _.map(counts, (val, key) => {
+    return { author: key, likes: val }
+  })
+
+  const reducer = (bigger, item) => {
+    return bigger.likes > item.likes ? bigger : item
+  }
+  const biggest = countArr.reduce(reducer, countArr[0])
+  return biggest
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes }

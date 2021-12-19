@@ -104,3 +104,13 @@ describe("author with most blogs", () => {
     })
   })
 })
+
+describe("author with most likes", () => {
+  test("of a bigger list is found right", () => {
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 17,
+    })
+  })
+})

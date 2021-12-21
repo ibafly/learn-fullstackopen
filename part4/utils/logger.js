@@ -1,9 +1,14 @@
 const info = (...params) => {
-  console.log(...params)
+  if (process.env.NODE_ENV !== "test") {
+    // The middleware that outputs information about the HTTP requests is obstructing the test execution output. Let us modify the logger so that it does not print to console in test mode
+    console.log(...params)
+  }
 }
 
 const error = (...params) => {
-  console.error(...params)
+  if (process.env.NODE_ENV !== "test") {
+    console.error(...params)
+  }
 }
 
 module.exports = {

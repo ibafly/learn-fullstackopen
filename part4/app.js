@@ -1,6 +1,7 @@
 const config = require("./utils/config")
 const logger = require("./utils/logger")
 const express = require("express")
+require("express-async-errors") // function as try-catch wrapped around async/await
 const middleware = require("./utils/middleware")
 const blogsRouter = require("./controllers/blogs")
 const app = express()

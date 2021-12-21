@@ -51,6 +51,14 @@ const initialBlogs = [
   },
 ]
 
+const aNewBlogWithContent = {
+  title: "Type wars",
+  author: "Robert C. Martin",
+  url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+  content: "Here is the content of a blog.",
+  likes: 2,
+}
+
 const nonExistingId = async () => {
   const note = new Note({ content: "willremovethissoon", date: new Date() })
   await note.save()
@@ -60,12 +68,13 @@ const nonExistingId = async () => {
 }
 
 const blogsInDb = async () => {
-  const notes = await Note.find({})
-  return notes.map(note => note.toJSON())
+  const blogs = await Blog.find({})
+  return blogs.map(blog => blog.toJSON())
 }
 
 module.exports = {
   initialBlogs,
+  aNewBlogWithContent,
   nonExistingId,
   blogsInDb,
 }

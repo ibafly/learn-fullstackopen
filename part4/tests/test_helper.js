@@ -51,12 +51,16 @@ const initialBlogs = [
   },
 ]
 
-const aNewBlogWithContent = {
+const aNewBlogWithContentAndNoLikes = {
   title: "Type wars",
   author: "Robert C. Martin",
   url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
   content: "Here is the content of a blog.",
-  likes: 2,
+}
+
+const aNewBlogWithoutTitleNorUrl = {
+  author: "Robert C. Martin",
+  content: "Here is the content of a blog without title nor url.",
 }
 
 const nonExistingId = async () => {
@@ -74,7 +78,8 @@ const blogsInDb = async () => {
 
 module.exports = {
   initialBlogs,
-  aNewBlogWithContent,
+  aNewBlogWithContentAndNoLikes,
+  aNewBlogWithoutTitleNorUrl,
   nonExistingId,
   blogsInDb,
 }

@@ -27,18 +27,25 @@ describe("initial blogs", () => {
 })
 
 describe("addition of a new blog", () => {
-  test("succeeds with valid data", async () => {
+  test("succeeds with valid data && the likes defaults to 0", async () => {
     const res = await api
       .post("/api/blogs")
-      .send(helper.aNewBlogWithContent)
+      .send(helper.aNewBlogWithContentAndNoLikes)
       .expect(201)
       .expect("Content-Type", /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
-    console.log(res.body, blogsAtEnd)
-    expect(res.body.content).toBe(helper.aNewBlogWithContent.content)
+    console.log(res.body)
+    expect(res.body.content).toBe(helper.aNewBlogWithContentAndNoLikes.content)
+    expect(res.body.likes).toBe(0)
+  })
+  test("fails with no title nor url", async () => {
+    const res = await api
+      .post("/api/blogs")
+      .send(helper.aNewBlogWithoutTitleNorUrl)
+      .expect(400)
   })
 })
 

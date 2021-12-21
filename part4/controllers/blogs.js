@@ -21,7 +21,20 @@ blogsRouter.get("/", async (req, res) => {
 })
 
 blogsRouter.post("/", async (req, res) => {
-  const blog = new Blog(req.body)
+  const body = req.body
+
+  if (!body.title && !body.url) {
+    return res.status(400).send({ error: "title and url are missing" })
+  }
+
+  const initialized = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    content: body.content,
+    likes: body.likes || 0,
+  }
+  const blog = new Blog(initialized)
 
   const savedBlog = await blog.save()
   res.status(201).json(savedBlog)

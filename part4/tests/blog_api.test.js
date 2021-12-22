@@ -37,7 +37,7 @@ describe("addition of a new blog", () => {
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
-    console.log(res.body)
+    //   console.log(res.body)
     expect(res.body.content).toBe(helper.aNewBlogWithContentAndNoLikes.content)
     expect(res.body.likes).toBe(0)
   })
@@ -46,6 +46,18 @@ describe("addition of a new blog", () => {
       .post("/api/blogs")
       .send(helper.aNewBlogWithoutTitleNorUrl)
       .expect(400)
+  })
+})
+
+describe("deletion of a blog", () => {
+  test("succeeds with an exited id", async () => {
+    const blogs = await Blog.find({})
+    const randIdx = Math.floor(Math.random() * blogs.length)
+    const id = blogs[randIdx].id
+    const res = await api.delete(`/api/blogs/${id}`).expect(204)
+  })
+  test("fails with an invalid id", async () => {
+    const res = await api.delete("/api/blogs/INVALID_ID").expect(400)
   })
 })
 

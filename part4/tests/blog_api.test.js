@@ -50,14 +50,31 @@ describe("addition of a new blog", () => {
 })
 
 describe("deletion of a blog", () => {
-  test("succeeds with an exited id", async () => {
-    const blogs = await Blog.find({})
+  test("succeeds with an existed id", async () => {
+    const blogs = await helper.blogsInDb()
     const randIdx = Math.floor(Math.random() * blogs.length)
     const id = blogs[randIdx].id
     const res = await api.delete(`/api/blogs/${id}`).expect(204)
   })
   test("fails with an invalid id", async () => {
     const res = await api.delete("/api/blogs/INVALID_ID").expect(400)
+  })
+})
+
+describe("update the info of a blog", () => {
+  test("succeeds to plus one to the number of likes", async () => {
+    const blogs = await helper.blogsInDb()
+    //    const blogs = await Blog.find({})
+    const randIdx = Math.floor(Math.random() * blogs.length)
+    const id = blogs[randIdx].id
+    const likes = blogs[randIdx].likes
+    //    console.log(id, likes)
+    const res = await api
+      .put(`/api/blogs/${id}`)
+      .send({ likes: likes + 1 })
+      .expect(200)
+    //    const blogAtEnd = await Blog.findById(id)
+    expect(res.body.likes).toBe(likes + 1)
   })
 })
 

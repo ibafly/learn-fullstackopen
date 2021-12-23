@@ -9,17 +9,25 @@ usersRouter.get("/", async (req, res) => {
 
 usersRouter.post("/", async (req, res) => {
   const body = req.body
+
+  const passwordIsValid = body.password && body.password.length >= 3
+  if (!passwordIsValid) {
+    return res
+      .status(400)
+      .send({ error: "password is missing or less than 3 characters" })
+  }
+
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
-  const fromUserInfo = {
+  const newUser = new Users({
     username: body.username,
     name: body.name,
     passwordHash,
-  }
+  })
 
-  const newUser = new Users(fromUserInfo)
-  newUser.save()
+  await newUser.save()
   res.status(201).send(newUser)
 })
+
 module.exports = usersRouter

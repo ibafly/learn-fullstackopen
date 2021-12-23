@@ -1,4 +1,5 @@
 const Blog = require("../models/blog")
+const User = require("../models/user")
 
 const initialBlogs = [
   {
@@ -61,8 +62,22 @@ const nonExistingId = async () => {
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
-  return blogs.map(blog => blog.toJSON())
+  return blogs.map(blog => blog.toJSON()) // in res.send(blogs), blogs are identified as object and automatically passed to xxx.toJSON()
 }
+
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(user => user.toJSON())
+}
+
+const initialOneRootUser = [
+  {
+    username: "root",
+    name: "Superuser",
+    passwordHash:
+      "$2b$10$BZOf9E1/xq2izH1QPiHuQu6vne5nZibWnxQ7yOpX4Qczv2NBzqv4u",
+  },
+]
 
 module.exports = {
   initialBlogs,
@@ -70,4 +85,6 @@ module.exports = {
   aNewBlogWithoutTitleNorUrl,
   nonExistingId,
   blogsInDb,
+  usersInDb,
+  initialOneRootUser,
 }

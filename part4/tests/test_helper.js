@@ -75,9 +75,12 @@ const initialOneRootUser = [
     username: "root",
     name: "Superuser",
     passwordHash:
-      "$2b$10$BZOf9E1/xq2izH1QPiHuQu6vne5nZibWnxQ7yOpX4Qczv2NBzqv4u",
+      "$2b$10$6hbZg2hNCOHdY0IklItNG.spICxlK1IXVN0xJtj52IHJRIw.L/U8q",
   },
 ]
+
+const rootUserToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYxYzZhZTMwMWJmNmZiYjRlZThjMTM5YyIsImlhdCI6MTY0MDQxMDY3NX0.Nvv-GxYqrRKckXICb7yaApo4qXIKRgwLHKogQ6DUFIU"
 
 module.exports = {
   initialBlogs,
@@ -87,4 +90,5 @@ module.exports = {
   blogsInDb,
   usersInDb,
   initialOneRootUser,
+  rootUserToken,
 }

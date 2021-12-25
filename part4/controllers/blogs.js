@@ -2,7 +2,7 @@
 const blogsRouter = require("express").Router()
 const Blog = require("../models/blog")
 const User = require("../models/user")
-const jwt = require("jsonwebtoken")
+// const jwt = require("jsonwebtoken")
 
 // blogsRouter.get("/", (request, response) => {
 //   // notice that /api/blogs becomes /
@@ -40,8 +40,9 @@ blogsRouter.post("/", async (req, res) => {
   }
 
   //  const token = getTokenFrom(req)
-  const token = body.token
-  const userFromToken = await jwt.verify(token, process.env.SECRET_KEY)
+  const token = req.token
+  // const userFromToken = jwt.verify(token, process.env.SECRET_KEY) // extracted to middleware userExtractor
+  const userFromToken = req.user
   if (!token || !userFromToken) {
     return res.status(401).json({ error: "token missing or invalid" })
   }
@@ -67,7 +68,7 @@ blogsRouter.post("/", async (req, res) => {
 blogsRouter.delete("/:id", async (req, res) => {
   const body = req.body
   const params = req.params
-  const token = body.token
+  const token = req.token
   const id = params.id
 
   const blog = await Blog.findById(id)
@@ -75,7 +76,8 @@ blogsRouter.delete("/:id", async (req, res) => {
     res.status(400).end()
   }
 
-  const userFromToken = jwt.verify(token, process.env.SECRET_KEY)
+  // const userFromToken = jwt.verify(token, process.env.SECRET_KEY) // extracted to middleware userExtractor
+  const userFromToken = req.user
   if (!token || !userFromToken) {
     return res.status(401).json({ error: "token missing or invalid" })
   }

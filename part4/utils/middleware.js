@@ -1,12 +1,16 @@
 const { response } = require("express")
 const request = require("superagent")
 const logger = require("./logger")
+const jwt = require("jsonwebtoken")
 
 const requestLogger = (request, response, next) => {
   // simple alternative to morgan logger
   logger.info("Method:", request.method)
   logger.info("Path:  ", request.path)
   logger.info("Body:  ", request.body)
+  logger.info("---")
+  logger.info("Token: ", request.token)
+  logger.info("User:  ", request.user)
   logger.info("---")
   next()
 }
@@ -19,11 +23,19 @@ const tokenExtractor = (request, response, next) => {
   //  request.body.token = request.get("authorization").slice(7)
 
   const authorization = request.get("authorization")
-  request.body.token =
+  request.token =
     authorization && authorization.toLowerCase().startsWith("bearer ")
       ? authorization.slice(7)
       : null
   // `bear ` sliced out, generate a new string of token
+  next()
+}
+
+const userExtractor = (request, response, next) => {
+  logger.info(undefined !== null, null ? 1 : 2, request.token)
+  request.user = request.token
+    ? jwt.verify(request.token, process.env.SECRET_KEY)
+    : null
   next()
 }
 
@@ -49,6 +61,7 @@ const errorHandler = (error, request, response, next) => {
 module.exports = {
   requestLogger,
   tokenExtractor,
+  userExtractor,
   unknownEndpoint,
   errorHandler,
 }

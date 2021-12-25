@@ -23,13 +23,14 @@ blogsRouter.get("/", async (req, res) => {
   res.json(blogs)
 })
 
-const getTokenFrom = request => {
-  const authorization = request.get("authorization")
-  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-    return authorization.slice(7) // `bear ` sliced out, generate a new string of token
-  }
-  return null
-}
+//--- extracted to middleware tokenExtractor
+// const getTokenFrom = request => {
+//   const authorization = request.get("authorization")
+//   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+//     return authorization.slice(7) // `bear ` sliced out, generate a new string of token
+//   }
+//   return null
+// }
 
 blogsRouter.post("/", async (req, res) => {
   const body = req.body
@@ -38,8 +39,8 @@ blogsRouter.post("/", async (req, res) => {
     return res.status(400).send({ error: "title and url are missing" })
   }
 
-  const token = getTokenFrom(req)
-  console.log(token)
+  //  const token = getTokenFrom(req)
+  const token = body.token
   const userFromToken = await jwt.verify(token, process.env.SECRET_KEY)
   if (!token || !userFromToken) {
     return res.status(401).json({ error: "token missing or invalid" })

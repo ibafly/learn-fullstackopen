@@ -1,3 +1,5 @@
+const { response } = require("express")
+const request = require("superagent")
 const logger = require("./logger")
 
 const requestLogger = (request, response, next) => {
@@ -6,6 +8,22 @@ const requestLogger = (request, response, next) => {
   logger.info("Path:  ", request.path)
   logger.info("Body:  ", request.body)
   logger.info("---")
+  next()
+}
+
+const tokenExtractor = (request, response, next) => {
+  //  const authorization = request.get("authorization")
+  //  const token = authorization.slice(7)
+  //  request.body.token = token
+
+  //  request.body.token = request.get("authorization").slice(7)
+
+  const authorization = request.get("authorization")
+  request.body.token =
+    authorization && authorization.toLowerCase().startsWith("bearer ")
+      ? authorization.slice(7)
+      : null
+  // `bear ` sliced out, generate a new string of token
   next()
 }
 
@@ -30,6 +48,7 @@ const errorHandler = (error, request, response, next) => {
 
 module.exports = {
   requestLogger,
+  tokenExtractor,
   unknownEndpoint,
   errorHandler,
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react"
 import Blog from "./components/Blog"
-import blogService from "./services/blogs"
+import BlogForm from "./components/BlogForm"
 import LoginForm from "./components/LoginForm"
+import blogService from "./services/blogs"
 import loginService from "./services/login"
 
 const App = () => {
@@ -10,6 +11,10 @@ const App = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
+
+  const [blogTitle, setBlogTitle] = useState("")
+  const [blogAuthor, setBlogAuthor] = useState("")
+  const [blogUrl, setBlogUrl] = useState("")
 
   useEffect(() => {
     blogService
@@ -22,8 +27,7 @@ const App = () => {
 
   useEffect(() => {
     const loggedUser = JSON.parse(window.localStorage.getItem("loggedUser"))
-    loggedUser && setUser(loggedUser)
-    console.log(loggedUser)
+    loggedUser && setUser(loggedUser) && blogService.setToken(loggedUser.token)
   }, [])
 
   const followUsernameInput = event => {
@@ -39,6 +43,8 @@ const App = () => {
       const user = await loginService.login({ username, password })
       setUser(user)
       window.localStorage.setItem("loggedUser", JSON.stringify(user))
+      blogService.setToken(user.token)
+
       setUsername("")
       setPassword("")
     } catch (excep) {
@@ -48,10 +54,38 @@ const App = () => {
       }, 5000)
     }
   }
-
   const handleLogout = event => {
     window.localStorage.removeItem("loggedUser")
     setUser(null)
+  }
+
+  const followTitleInput = event => {
+    setBlogTitle(event.target.value)
+  }
+  const followAuthorInput = ({ target }) => {
+    setBlogAuthor(target.value)
+  }
+  const followUrlInput = ({ target }) => {
+    setBlogUrl(target.value)
+  }
+  const handleCreateBlog = async event => {
+    event.preventDefault()
+
+    try {
+      const blog = await blogService.create({
+        title: blogTitle,
+        author: blogAuthor,
+        url: blogUrl,
+      })
+      console.log("blog", blog)
+      setBlogs(blogs.concat(blog))
+    } catch (excep) {
+      console.log("exception:", excep)
+    }
+
+    setBlogTitle("")
+    setBlogAuthor("")
+    setBlogUrl("")
   }
 
   const loginSection = () => {
@@ -77,6 +111,16 @@ const App = () => {
           {user ? user.name : ""} logged in
           <button onClick={handleLogout}>logout</button>
         </h3>
+        <h2>create new</h2>
+        <BlogForm
+          titleInputVal={blogTitle}
+          titleInputOnChange={followTitleInput}
+          authorInputVal={blogAuthor}
+          authorInputOnChange={followAuthorInput}
+          urlInputVal={blogUrl}
+          urlInputOnChange={followUrlInput}
+          formOnSubmit={handleCreateBlog}
+        />
         {blogs.map(blog => (
           <Blog key={blog.id} blog={blog} />
         ))}

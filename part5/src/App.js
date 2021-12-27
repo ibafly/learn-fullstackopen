@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import Blog from "./components/Blog"
 import BlogForm from "./components/BlogForm"
 import LoginForm from "./components/LoginForm"
+import Notification from "./components/Notification"
 import blogService from "./services/blogs"
 import loginService from "./services/login"
 
@@ -48,7 +49,7 @@ const App = () => {
       setUsername("")
       setPassword("")
     } catch (excep) {
-      setMsg("wrong credentials")
+      setMsg("wrong credentials (username or password)")
       setTimeout(() => {
         setMsg(null)
       }, 5000)
@@ -79,6 +80,11 @@ const App = () => {
       })
       console.log("blog", blog)
       setBlogs(blogs.concat(blog))
+
+      setMsg(`a new blog ${blog.title} by ${blog.author} added`)
+      setTimeout(() => {
+        setMsg(null)
+      }, 5000)
     } catch (excep) {
       console.log("exception:", excep)
     }
@@ -92,6 +98,7 @@ const App = () => {
     return (
       <div>
         <h2>log in to application</h2>
+        <Notification message={msg} />
         <LoginForm
           usernameInputVal={username}
           usernameInputOnChange={followUsernameInput}
@@ -107,6 +114,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
+        <Notification message={msg} />
         <h3>
           {user ? user.name : ""} logged in
           <button onClick={handleLogout}>logout</button>

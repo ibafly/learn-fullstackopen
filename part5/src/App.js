@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Blog from "./components/Blog"
 import BlogForm from "./components/BlogForm"
 import LoginForm from "./components/LoginForm"
 import Notification from "./components/Notification"
+import Togglable from "./components/Togglable"
 import blogService from "./services/blogs"
 import loginService from "./services/login"
 
@@ -79,6 +80,7 @@ const App = () => {
         url: blogUrl,
       })
       console.log("blog", blog)
+      togglableBlogFormRef.current.toggleVisibility() // fold blog form after successfully create a blog
       setBlogs(blogs.concat(blog))
 
       setMsg(`a new blog ${blog.title} by ${blog.author} added`)
@@ -110,6 +112,7 @@ const App = () => {
     )
   }
 
+  const togglableBlogFormRef = useRef()
   const userBlogSection = () => {
     return (
       <div>
@@ -120,15 +123,20 @@ const App = () => {
           <button onClick={handleLogout}>logout</button>
         </h3>
         <h2>create new</h2>
-        <BlogForm
-          titleInputVal={blogTitle}
-          titleInputOnChange={followTitleInput}
-          authorInputVal={blogAuthor}
-          authorInputOnChange={followAuthorInput}
-          urlInputVal={blogUrl}
-          urlInputOnChange={followUrlInput}
-          formOnSubmit={handleCreateBlog}
-        />
+        <Togglable btnLabel={"create new blog"} ref={togglableBlogFormRef}>
+          <BlogForm
+            titleInputVal={blogTitle}
+            titleInputOnChange={followTitleInput}
+            authorInputVal={blogAuthor}
+            authorInputOnChange={followAuthorInput}
+            urlInputVal={blogUrl}
+            urlInputOnChange={followUrlInput}
+            formOnSubmit={handleCreateBlog}
+            cancelBtnOnClick={() => {
+              togglableBlogFormRef.current.toggleVisibility()
+            }}
+          />
+        </Togglable>
         {blogs.map(blog => (
           <Blog key={blog.id} blog={blog} />
         ))}

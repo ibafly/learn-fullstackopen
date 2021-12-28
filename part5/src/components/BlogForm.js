@@ -8,11 +8,12 @@ const BlogForm = ({
   urlInputVal,
   urlInputOnChange,
   formOnSubmit,
+  cancelBtnOnClick,
 }) => {
   return (
     <form onSubmit={formOnSubmit}>
       <div>
-        <label for="title">title:</label>
+        <label htmlFor="title">title:</label>
         <input
           type="text"
           value={titleInputVal}
@@ -20,7 +21,7 @@ const BlogForm = ({
         />
       </div>
       <div>
-        <label for="author">author:</label>
+        <label htmlFor="author">author:</label>
         <input
           type="text"
           value={authorInputVal}
@@ -28,10 +29,11 @@ const BlogForm = ({
         />
       </div>
       <div>
-        <label for="url">url:</label>
+        <label htmlFor="url">url:</label>
         <input type="text" value={urlInputVal} onChange={urlInputOnChange} />
       </div>
       <button type="submit">create</button>
+      <button onClick={cancelBtnOnClick}>cancel</button>
     </form>
   )
 }

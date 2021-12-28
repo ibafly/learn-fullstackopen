@@ -8,7 +8,7 @@ const LoginForm = ({
 }) => (
   <form onSubmit={formOnSubmit}>
     <div>
-      <label for="username">username:</label>
+      <label htmlFor="username">username:</label>
       <input
         type="text"
         id="username"
@@ -17,7 +17,7 @@ const LoginForm = ({
       />
     </div>
     <div>
-      <label for="password">password:</label>
+      <label htmlFor="password">password:</label>
       <input
         type="password"
         id="password"

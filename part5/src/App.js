@@ -14,10 +14,6 @@ const App = () => {
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
 
-  const [blogTitle, setBlogTitle] = useState("")
-  const [blogAuthor, setBlogAuthor] = useState("")
-  const [blogUrl, setBlogUrl] = useState("")
-
   useEffect(() => {
     blogService
       .getAll()
@@ -61,24 +57,9 @@ const App = () => {
     setUser(null)
   }
 
-  const followTitleInput = event => {
-    setBlogTitle(event.target.value)
-  }
-  const followAuthorInput = ({ target }) => {
-    setBlogAuthor(target.value)
-  }
-  const followUrlInput = ({ target }) => {
-    setBlogUrl(target.value)
-  }
-  const handleCreateBlog = async event => {
-    event.preventDefault()
-
+  const addBlog = async blogObj => {
     try {
-      const blog = await blogService.create({
-        title: blogTitle,
-        author: blogAuthor,
-        url: blogUrl,
-      })
+      const blog = await blogService.create(blogObj)
       console.log("blog", blog)
       togglableBlogFormRef.current.toggleVisibility() // fold blog form after successfully create a blog
       setBlogs(blogs.concat(blog))
@@ -90,10 +71,6 @@ const App = () => {
     } catch (excep) {
       console.log("exception:", excep)
     }
-
-    setBlogTitle("")
-    setBlogAuthor("")
-    setBlogUrl("")
   }
 
   const loginSection = () => {
@@ -125,13 +102,7 @@ const App = () => {
         <h2>create new</h2>
         <Togglable btnLabel={"create new blog"} ref={togglableBlogFormRef}>
           <BlogForm
-            titleInputVal={blogTitle}
-            titleInputOnChange={followTitleInput}
-            authorInputVal={blogAuthor}
-            authorInputOnChange={followAuthorInput}
-            urlInputVal={blogUrl}
-            urlInputOnChange={followUrlInput}
-            formOnSubmit={handleCreateBlog}
+            opAfterSubmit={addBlog} // do operation after form on submit
             cancelBtnOnClick={() => {
               togglableBlogFormRef.current.toggleVisibility()
             }}

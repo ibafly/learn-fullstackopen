@@ -10,6 +10,7 @@ import loginService from "./services/login"
 const App = () => {
   const [msg, setMsg] = useState(null)
   const [blogs, setBlogs] = useState([])
+  const [detailToggles, setDetailToggles] = useState([])
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
@@ -90,6 +91,17 @@ const App = () => {
   }
 
   const togglableBlogFormRef = useRef()
+  const changeDetailToggles = event => {
+    const idx = event.target.parentNode.getAttribute("data-index")
+    const detailTogglesCopy = [...detailToggles]
+    detailTogglesCopy[idx] = !detailTogglesCopy[idx]
+    console.log(
+      event.target.parentNode.getAttribute("data-index"),
+      idx,
+      detailTogglesCopy
+    )
+    setDetailToggles(detailTogglesCopy)
+  }
   const userBlogSection = () => {
     return (
       <div>
@@ -108,8 +120,14 @@ const App = () => {
             }}
           />
         </Togglable>
-        {blogs.map(blog => (
-          <Blog key={blog.id} blog={blog} />
+        {blogs.map((blog, idx) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            dataIndex={idx}
+            btnOnClick={changeDetailToggles}
+            toggle={detailToggles[idx]}
+          />
         ))}
       </div>
     )

@@ -39,15 +39,16 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({ username, password })
-      setUser(user)
-      window.localStorage.setItem("loggedUser", JSON.stringify(user))
-      blogService.setToken(user.token)
+      const returnedUser = await loginService.login({ username, password })
+      console.log(returnedUser)
+      setUser(returnedUser)
+      window.localStorage.setItem("loggedUser", JSON.stringify(returnedUser))
+      blogService.setToken(returnedUser.token)
 
       setUsername("")
       setPassword("")
     } catch (excep) {
-      setMsg("wrong credentials (username or password)")
+      setMsg("wrong credentials (username or password)", excep)
       setTimeout(() => {
         setMsg(null)
       }, 5000)
@@ -60,7 +61,8 @@ const App = () => {
 
   const addBlog = async blogObj => {
     try {
-      const blog = await blogService.create(blogObj)
+      console.log(user, user.id)
+      const blog = await blogService.create({ ...blogObj })
       console.log("blog", blog)
       togglableBlogFormRef.current.toggleVisibility() // fold blog form after successfully create a blog
       setBlogs(blogs.concat(blog))
@@ -69,6 +71,26 @@ const App = () => {
       setTimeout(() => {
         setMsg(null)
       }, 5000)
+    } catch (excep) {
+      console.log("exception:", excep)
+    }
+  }
+
+  const plusOneLike = async idx => {
+    console.log(user, typeof user)
+    const blog = blogs[idx]
+    const blogLikePlusOne = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+      userId: user.userId,
+    }
+    try {
+      const updatedBlog = await blogService.update(blog.id, blogLikePlusOne)
+      console.log(updatedBlog)
+      blogs[idx] = updatedBlog
+      setBlogs([...blogs])
     } catch (excep) {
       console.log("exception:", excep)
     }
@@ -95,11 +117,11 @@ const App = () => {
     const idx = event.target.parentNode.getAttribute("data-index")
     const detailTogglesCopy = [...detailToggles]
     detailTogglesCopy[idx] = !detailTogglesCopy[idx]
-    console.log(
-      event.target.parentNode.getAttribute("data-index"),
-      idx,
-      detailTogglesCopy
-    )
+    // console.log(
+    //   event.target.parentNode.getAttribute("data-index"),
+    //   idx,
+    //   detailTogglesCopy
+    // )
     setDetailToggles(detailTogglesCopy)
   }
   const userBlogSection = () => {
@@ -125,8 +147,9 @@ const App = () => {
             key={blog.id}
             blog={blog}
             dataIndex={idx}
-            btnOnClick={changeDetailToggles}
+            toggleBtnOnClick={changeDetailToggles}
             toggle={detailToggles[idx]}
+            opAfterLikeBtnOnClick={plusOneLike}
           />
         ))}
       </div>

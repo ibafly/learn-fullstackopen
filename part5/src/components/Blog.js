@@ -28,18 +28,18 @@ const Blog = ({
       <button onClick={toggleBtnOnClick}>
         {blog.toggle ? "hide" : "view"}
       </button>
-      {blog.toggle && (
+      <div
+        style={{ display: blog.toggle ? "" : "none" }}
+        className={"togglableContent"}
+      >
+        <div>{blog.url}</div>
         <div>
-          <div>{blog.url}</div>
-          <div>
-            likes: {blog.likes}
-            <button onClick={likeBtnOnClick}>like</button>
-          </div>
-          {blog.userId && <div>{blog.userId.name}</div>}
-          <div>{showRemoveBtn}</div>
-          {showRemoveBtn && <button onClick={removeBtnOnClick}>remove</button>}
+          likes: {blog.likes}
+          <button onClick={likeBtnOnClick}>like</button>
         </div>
-      )}
+        {blog.userId && <div>{blog.userId.name}</div>}
+        {showRemoveBtn && <button onClick={removeBtnOnClick}>remove</button>}
+      </div>
     </div>
   )
 }

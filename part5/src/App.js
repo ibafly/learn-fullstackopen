@@ -62,7 +62,7 @@ const App = () => {
       }, 5000)
     }
   }
-  const handleLogout = event => {
+  const handleLogout = () => {
     window.localStorage.removeItem("loggedUser")
     setUser(null)
   }

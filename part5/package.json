@@ -17,7 +17,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "json-server -p3001 db.json",
+    "eslint": "eslint ."
   },
   "eslintConfig": {
     "extends": [
@@ -39,6 +41,7 @@
   },
   "proxy": "http://localhost:3003",
   "devDependencies": {
+    "eslint-plugin-jest": "^25.3.2",
     "react-error-overlay": "^6.0.10"
   }
 }

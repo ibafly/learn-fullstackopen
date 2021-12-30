@@ -1,16 +1,10 @@
 import React, { useState } from "react"
 
-const Blog = ({
-  blog,
-  toggleBtnOnClick,
-  toggle,
-  dataIndex,
-  opAfterLikeBtnOnClick,
-}) => {
+const Blog = ({ blog, toggleBtnOnClick, opAfterLikeBtnOnClick }) => {
   const likeBtnOnClick = event => {
-    const idx =
-      event.target.parentNode.parentNode.parentNode.getAttribute("data-index")
-    opAfterLikeBtnOnClick(idx)
+    const blogId =
+      event.target.parentNode.parentNode.parentNode.getAttribute("data-id")
+    opAfterLikeBtnOnClick(blogId)
   }
   const blogStyle = {
     paddingTop: 10,
@@ -19,10 +13,12 @@ const Blog = ({
     marginBottom: 5,
   }
   return (
-    <div data-index={dataIndex} style={blogStyle}>
+    <div data-id={blog.id} style={blogStyle}>
       {blog.title} {blog.author}
-      <button onClick={toggleBtnOnClick}>{toggle ? "hide" : "view"}</button>
-      {toggle && (
+      <button onClick={toggleBtnOnClick}>
+        {blog.toggle ? "hide" : "view"}
+      </button>
+      {blog.toggle && (
         <div>
           <div>{blog.url}</div>
           <div>

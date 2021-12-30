@@ -18,7 +18,13 @@ const App = () => {
   useEffect(() => {
     blogService
       .getAll()
-      .then(blogs => setBlogs(blogs))
+      .then(blogs =>
+        setBlogs(
+          blogs.map(blog => {
+            return { ...blog, toggle: false }
+          })
+        )
+      )
       .catch(err => {
         console.log(err.response.data.error)
       })
@@ -76,21 +82,23 @@ const App = () => {
     }
   }
 
-  const plusOneLike = async idx => {
-    console.log(user, typeof user)
-    const blog = blogs[idx]
-    const blogLikePlusOne = {
+  const plusOneLike = async blogId => {
+    const blog = blogs.find(blog => blog.id === blogId)
+    //   console.log(blog.userId)
+    const blogLikesPlusOne = {
+      // remote DB data structure, userId is not expanded
       title: blog.title,
       author: blog.author,
       url: blog.url,
       likes: blog.likes + 1,
-      userId: user.userId,
+      userId: blog.userId ? blog.userId._id : null, // use condition for test purpose, eliminate console error when blog has no userId field.
     }
     try {
-      const updatedBlog = await blogService.update(blog.id, blogLikePlusOne)
-      console.log(updatedBlog)
-      blogs[idx] = updatedBlog
-      setBlogs([...blogs])
+      await blogService.update(blog.id, blogLikesPlusOne)
+      const modifiedBlogs = blogs.map(blog => {
+        return blog.id === blogId ? { ...blog, likes: blog.likes + 1 } : blog
+      }) // local blogs data structure, userId is expanded with user detail info.
+      setBlogs(modifiedBlogs)
     } catch (excep) {
       console.log("exception:", excep)
     }
@@ -113,16 +121,12 @@ const App = () => {
   }
 
   const togglableBlogFormRef = useRef()
-  const changeDetailToggles = event => {
-    const idx = event.target.parentNode.getAttribute("data-index")
-    const detailTogglesCopy = [...detailToggles]
-    detailTogglesCopy[idx] = !detailTogglesCopy[idx]
-    // console.log(
-    //   event.target.parentNode.getAttribute("data-index"),
-    //   idx,
-    //   detailTogglesCopy
-    // )
-    setDetailToggles(detailTogglesCopy)
+  const changeBlogToggle = event => {
+    const blogId = event.target.parentNode.getAttribute("data-id")
+    const modifiedBlogs = blogs.map(blog =>
+      blog.id === blogId ? { ...blog, toggle: !blog.toggle } : blog
+    )
+    setBlogs(modifiedBlogs)
   }
   const userBlogSection = () => {
     return (
@@ -142,16 +146,16 @@ const App = () => {
             }}
           />
         </Togglable>
-        {blogs.map((blog, idx) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            dataIndex={idx}
-            toggleBtnOnClick={changeDetailToggles}
-            toggle={detailToggles[idx]}
-            opAfterLikeBtnOnClick={plusOneLike}
-          />
-        ))}
+        {[...blogs]
+          .sort((blogA, blogB) => blogB.likes - blogA.likes)
+          .map(blog => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              toggleBtnOnClick={changeBlogToggle}
+              opAfterLikeBtnOnClick={plusOneLike}
+            />
+          ))}
       </div>
     )
   }

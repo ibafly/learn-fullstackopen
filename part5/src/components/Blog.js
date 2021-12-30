@@ -1,10 +1,20 @@
 import React, { useState } from "react"
 
-const Blog = ({ blog, toggleBtnOnClick, opAfterLikeBtnOnClick }) => {
+const Blog = ({
+  blog,
+  toggleBtnOnClick,
+  opAfterLikeBtnOnClick,
+  opAfterRemoveBtnOnClick,
+  showRemoveBtn,
+}) => {
   const likeBtnOnClick = event => {
     const blogId =
       event.target.parentNode.parentNode.parentNode.getAttribute("data-id")
     opAfterLikeBtnOnClick(blogId)
+  }
+  const removeBtnOnClick = event => {
+    const blogId = event.target.parentNode.parentNode.getAttribute("data-id")
+    opAfterRemoveBtnOnClick(blogId)
   }
   const blogStyle = {
     paddingTop: 10,
@@ -25,6 +35,9 @@ const Blog = ({ blog, toggleBtnOnClick, opAfterLikeBtnOnClick }) => {
             likes: {blog.likes}
             <button onClick={likeBtnOnClick}>like</button>
           </div>
+          {blog.userId && <div>{blog.userId.name}</div>}
+          <div>{showRemoveBtn}</div>
+          {showRemoveBtn && <button onClick={removeBtnOnClick}>remove</button>}
         </div>
       )}
     </div>

@@ -26,15 +26,25 @@ const BlogForm = ({ opAfterSubmit, cancelBtnOnClick }) => {
     <form onSubmit={formOnSubmit}>
       <div>
         <label htmlFor="title">title:</label>
-        <input type="text" value={title} onChange={followTitleInput} />
+        <input
+          type="text"
+          id="title"
+          value={title}
+          onChange={followTitleInput}
+        />
       </div>
       <div>
         <label htmlFor="author">author:</label>
-        <input type="text" value={author} onChange={followAuthorInput} />
+        <input
+          type="text"
+          id="author"
+          value={author}
+          onChange={followAuthorInput}
+        />
       </div>
       <div>
         <label htmlFor="url">url:</label>
-        <input type="text" value={url} onChange={followUrlInput} />
+        <input type="text" id="url" value={url} onChange={followUrlInput} />
       </div>
       <button type="submit">create</button>
       <button onClick={cancelBtnOnClick}>cancel</button>

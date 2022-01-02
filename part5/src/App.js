@@ -165,20 +165,22 @@ const App = () => {
             }}
           />
         </Togglable>
-        {[...blogs]
-          .sort((blogA, blogB) => blogB.likes - blogA.likes)
-          .map(blog => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              toggleBtnOnClick={changeBlogToggle}
-              opAfterLikeBtnOnClick={plusOneLike}
-              opAfterRemoveBtnOnClick={deleteBlog}
-              showRemoveBtn={
-                blog.userId && blog.userId.id === user.userId ? true : false
-              }
-            />
-          ))}
+        <ul>
+          {[...blogs]
+            .sort((blogA, blogB) => blogB.likes - blogA.likes)
+            .map(blog => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                toggleBtnOnClick={changeBlogToggle}
+                opAfterLikeBtnOnClick={plusOneLike}
+                opAfterRemoveBtnOnClick={deleteBlog}
+                showRemoveBtn={
+                  blog.userId && blog.userId.id === user.userId ? true : false
+                }
+              />
+            ))}
+        </ul>
       </div>
     )
   }

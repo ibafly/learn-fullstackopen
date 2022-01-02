@@ -23,7 +23,7 @@ const Blog = ({
     marginBottom: 5,
   }
   return (
-    <div data-id={blog.id} style={blogStyle}>
+    <li data-id={blog.id} style={blogStyle}>
       {blog.title} {blog.author}
       <button onClick={toggleBtnOnClick}>
         {blog.toggle ? "hide" : "view"}
@@ -40,7 +40,7 @@ const Blog = ({
         {blog.userId && <div>{blog.userId.name}</div>}
         {showRemoveBtn && <button onClick={removeBtnOnClick}>remove</button>}
       </div>
-    </div>
+    </li>
   )
 }
 

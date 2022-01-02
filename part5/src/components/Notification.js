@@ -15,6 +15,7 @@ const Notification = ({ message }) => {
         ...msgStyle,
         color: message.includes("wrong") ? "red" : "green",
       }}
+      className={"notification"}
     >
       {message}
     </p>

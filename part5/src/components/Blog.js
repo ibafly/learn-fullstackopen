@@ -25,7 +25,7 @@ const Blog = ({
   return (
     <li data-id={blog.id} style={blogStyle}>
       {blog.title} {blog.author}
-      <button onClick={toggleBtnOnClick}>
+      <button className="toggle" onClick={toggleBtnOnClick}>
         {blog.toggle ? "hide" : "view"}
       </button>
       <div
@@ -35,10 +35,16 @@ const Blog = ({
         <div>{blog.url}</div>
         <div>
           likes: {blog.likes}
-          <button onClick={likeBtnOnClick}>like</button>
+          <button className="likes" onClick={likeBtnOnClick}>
+            like
+          </button>
         </div>
         {blog.userId && <div>{blog.userId.name}</div>}
-        {showRemoveBtn && <button onClick={removeBtnOnClick}>remove</button>}
+        {showRemoveBtn && (
+          <button className="remove" onClick={removeBtnOnClick}>
+            remove
+          </button>
+        )}
       </div>
     </li>
   )

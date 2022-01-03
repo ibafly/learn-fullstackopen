@@ -78,7 +78,7 @@ describe("Blog app", function () {
       cy.get(".likes").parent().should("contain", "likes: 1")
     })
 
-    it.only("a blog can be deleted by its creator", function () {
+    it("a blog can be deleted by its creator", function () {
       cy.get("html").should("contain", "Blog created during initialization")
       cy.get(".toggle").click()
       cy.get(".remove").parent().should("contain", "Superuser")
@@ -98,6 +98,35 @@ describe("Blog app", function () {
       cy.login({ username: "wheel", password: "wheelpwd" })
 
       cy.get(".remove").should("not.exist")
+    })
+
+    it.only("blogs are listed according to likes with the most being first", function () {
+      cy.createBlog({
+        title: "One blog",
+        author: "Robo",
+        url: "https://from.order.test",
+      })
+      cy.createBlog({
+        title: "Another blog",
+        author: "Robo",
+        url: "https://from.order.test",
+      })
+
+      cy.contains("One blog").find(".toggle").click()
+      cy.contains("One blog").find(".likes").click().wait(3000)
+      cy.contains("One blog").find(".likes").click().wait(3000)
+
+      cy.contains("Another blog").find(".toggle").click()
+      cy.contains("Another blog").find(".likes").click().wait(3000)
+
+      cy.get(".likes")
+        .parent()
+        .then(elements => {
+          const likesOrder = elements
+            .map((idx, ele) => Number(ele.innerText.slice(7, -4)))
+            .toArray()
+          expect(likesOrder).to.deep.equal([2, 1, 0])
+        })
     })
   })
 })

@@ -19,7 +19,7 @@ const asObject = anecdote => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
+const reducer = (state = [], action) => {
   console.log("state now: ", state)
   console.log("action", action)
   switch (action.type) {
@@ -31,6 +31,8 @@ const reducer = (state = initialState, action) => {
       )
     case "NEW_ANECDOTE":
       return state.concat(asObject(action.content))
+    case "INIT_ANECDOTES":
+      return action.content
     default:
       return state
   }
@@ -41,5 +43,8 @@ export const voteTo = id => {
 }
 export const createNewFrom = content => {
   return { type: "NEW_ANECDOTE", content }
+}
+export const initiateFrom = content => {
+  return { type: "INIT_ANECDOTES", content }
 }
 export default reducer

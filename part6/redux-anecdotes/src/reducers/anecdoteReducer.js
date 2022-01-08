@@ -31,9 +31,9 @@ const reducer = (state = initialState, action) => {
       )
     case "NEW_ANECDOTE":
       return state.concat(asObject(action.content))
+    default:
+      return state
   }
-
-  return state
 }
 
 export const voteTo = id => {

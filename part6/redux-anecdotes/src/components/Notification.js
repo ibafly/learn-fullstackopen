@@ -9,7 +9,7 @@ const Notification = () => {
   }
   const notification = useSelector(state => state.notification)
 
-  return <div style={style}>{notification}</div>
+  return notification ? <div style={style}>{notification}</div> : null
 }
 
 export default Notification

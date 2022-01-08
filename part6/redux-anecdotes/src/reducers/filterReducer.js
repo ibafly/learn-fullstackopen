@@ -1,23 +1,16 @@
 const reducer = (state = "", action) => {
   switch (action.type) {
-    case "SHOW":
+    case "FILTER":
       return action.content
-    case "CLEAR":
-      return ""
     default:
       return state
   }
 }
 
-export const showMsg = content => {
+export const filterBy = content => {
   return {
-    type: "SHOW",
+    type: "FILTER",
     content,
-  }
-}
-export const clearMsg = () => {
-  return {
-    type: "CLEAR",
   }
 }
 export default reducer

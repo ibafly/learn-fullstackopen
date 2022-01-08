@@ -5,6 +5,7 @@ import { clearMsg, showMsg } from "../reducers/notificationReducer"
 
 const AnecdoteList = props => {
   const anecdotes = useSelector(state => state.anecdote)
+  const filterText = useSelector(state => state.filter)
   const dispatch = useDispatch()
 
   const vote = (id, content) => {
@@ -18,6 +19,11 @@ const AnecdoteList = props => {
   }
 
   return anecdotes
+    .filter(anecdote =>
+      anecdote.content
+        .toLocaleLowerCase()
+        .includes(filterText.toLocaleLowerCase())
+    )
     .sort((a, b) => b.votes - a.votes)
     .map(anecdote => (
       <div key={anecdote.id}>

@@ -13,9 +13,6 @@ const AnecdoteList = props => {
     dispatch(voteTo({ id, content, votes }))
 
     dispatch(setMsg(`you voted ${content}`, 5))
-    //    setTimeout(() => {
-    //      dispatch(clearMsg())
-    //    }, 5000)
   }
 
   return anecdotes

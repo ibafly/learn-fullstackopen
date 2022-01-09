@@ -1,8 +1,8 @@
 import React from "react"
 import { useDispatch } from "react-redux"
-import anecdoteService from "../services/anecdotes"
+// import anecdoteService from "../services/anecdotes"
 import { createNewFrom } from "../reducers/anecdoteReducer"
-import { clearMsg, showMsg } from "../reducers/notificationReducer"
+import { setMsg } from "../reducers/notificationReducer"
 
 const AnecdoteForm = props => {
   const dispatch = useDispatch()
@@ -14,10 +14,7 @@ const AnecdoteForm = props => {
     //    const newAnecdote = await anecdoteService.create(content)
     dispatch(createNewFrom(content))
 
-    dispatch(showMsg(`you added ${content}`))
-    setTimeout(() => {
-      dispatch(clearMsg())
-    }, 5000)
+    dispatch(setMsg(`you added ${content}`, 5))
   }
 
   return (

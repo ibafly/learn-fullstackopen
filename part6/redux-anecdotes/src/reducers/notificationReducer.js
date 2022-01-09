@@ -1,6 +1,6 @@
 const reducer = (state = "", action) => {
   switch (action.type) {
-    case "SHOW":
+    case "SET":
       return action.content
     case "CLEAR":
       return ""
@@ -9,10 +9,17 @@ const reducer = (state = "", action) => {
   }
 }
 
-export const showMsg = content => {
-  return {
-    type: "SHOW",
-    content,
+export const setMsg = (content, duration) => {
+  return async dispatch => {
+    dispatch({
+      type: "SET",
+      content,
+    })
+    await setTimeout(() => {
+      dispatch({
+        type: "CLEAR",
+      })
+    }, duration * 1000)
   }
 }
 export const clearMsg = () => {

@@ -5,6 +5,7 @@ import { clearMsg, showMsg } from "../reducers/notificationReducer"
 
 const AnecdoteList = props => {
   const anecdotes = useSelector(state => state.anecdote)
+  console.log(anecdotes)
   const filterText = useSelector(state => state.filter)
   const dispatch = useDispatch()
 

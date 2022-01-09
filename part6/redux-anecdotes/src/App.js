@@ -1,4 +1,5 @@
 import React, { useEffect } from "react"
+import { useDispatch } from "react-redux"
 import Notification from "./components/Notification"
 import Filter from "./components/Filter"
 import AnecdoteForm from "./components/AnecdoteForm"
@@ -8,10 +9,10 @@ import store from "./store"
 import { initiateFrom } from "./reducers/anecdoteReducer"
 
 const App = () => {
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    anecdoteService.getAll().then(anecdotes => {
-      store.dispatch(initiateFrom(anecdotes))
-    }, [])
+    dispatch(initiateFrom())
   })
 
   return (

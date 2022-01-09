@@ -1,3 +1,5 @@
+import anecdoteService from "../services/anecdotes"
+
 const anecdotesAtStart = [
   "If it hurts, do it more often",
   "Adding manpower to a late software project makes it later!",
@@ -45,7 +47,10 @@ export const voteTo = id => {
 export const createNewFrom = content => {
   return { type: "NEW_ANECDOTE", content }
 }
-export const initiateFrom = content => {
-  return { type: "INIT_ANECDOTES", content }
+export const initiateFrom = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch({ type: "INIT_ANECDOTES", content: anecdotes })
+  }
 }
 export default reducer

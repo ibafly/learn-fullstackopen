@@ -9,13 +9,19 @@ const reducer = (state = "", action) => {
   }
 }
 
+let lastTimeoutId = undefined
 export const setMsg = (content, duration) => {
   return async dispatch => {
     dispatch({
       type: "SET",
       content,
     })
-    await setTimeout(() => {
+
+    if (typeof lastTimeoutId === "number") {
+      clearTimeout(lastTimeoutId) // cancel the last timeout fn to avoid message be cleared by last near click (timeout fn)
+    }
+
+    lastTimeoutId = await setTimeout(() => {
       dispatch({
         type: "CLEAR",
       })

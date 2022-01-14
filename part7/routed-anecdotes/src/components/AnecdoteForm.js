@@ -1,11 +1,12 @@
 import React from "react"
+import Input from "./Input"
 import { useHistory } from "react-router-dom"
 import { useField } from "../hooks"
 
 const AnecdoteForm = props => {
   const content = useField("text")
   const author = useField("text")
-  const info = useField("text")
+  const info = useField("url")
   const history = useHistory()
 
   const handleSubmit = e => {
@@ -20,38 +21,32 @@ const AnecdoteForm = props => {
     history.push("/")
   }
 
+  const handleClick = e => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input
-            name="content"
-            type={content.type}
-            value={content.value}
-            onChange={content.onChange}
-          />
+          <Input name="content" {...content} />
         </div>
         <div>
           author
-          <input
-            name="author"
-            type={author.type}
-            value={author.value}
-            onChange={author.onChange}
-          />
+          <Input name="author" {...author} />
         </div>
         <div>
           url for more info
-          <input
-            name="info"
-            type={info.type}
-            value={info.value}
-            onChange={info.onChange}
-          />
+          <Input name="info" {...info} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
+        <button type="button" onClick={handleClick}>
+          reset
+        </button>
       </form>
     </div>
   )

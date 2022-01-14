@@ -10,7 +10,6 @@ import About from "./components/About"
 import Footer from "./components/Footer"
 
 const App = () => {
-  const [msg, setMsg] = useState("")
   const [anecdotes, setAnecdotes] = useState([
     {
       content: "If it hurts, do it more often",
@@ -28,7 +27,7 @@ const App = () => {
     },
   ])
 
-  const [notification, setNotification] = useState("")
+  const [msg, setMsg] = useState("")
 
   const addNew = anecdote => {
     anecdote.id = (Math.random() * 10000).toFixed(0)

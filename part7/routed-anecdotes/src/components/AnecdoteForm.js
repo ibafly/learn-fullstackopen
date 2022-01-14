@@ -1,9 +1,12 @@
 import React, { Component, useState } from "react"
+import { useHistory } from "react-router-dom"
 
 const AnecdoteForm = props => {
   const [content, setContent] = useState("")
   const [author, setAuthor] = useState("")
   const [info, setInfo] = useState("")
+  const [msg, setMsg] = useState("")
+  const history = useHistory()
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -13,6 +16,8 @@ const AnecdoteForm = props => {
       info,
       votes: 0,
     })
+
+    history.push("/")
   }
 
   return (

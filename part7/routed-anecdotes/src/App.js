@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom"
 import { useRouteMatch } from "react-router-dom"
 import Menu from "./components/Menu"
+import Notification from "./components/Notification"
 import AnecdoteList from "./components/AnecdoteList"
 import AnecdoteForm from "./components/AnecdoteForm"
 import Anecdote from "./components/Anecdote"
@@ -9,6 +10,7 @@ import About from "./components/About"
 import Footer from "./components/Footer"
 
 const App = () => {
+  const [msg, setMsg] = useState("")
   const [anecdotes, setAnecdotes] = useState([
     {
       content: "If it hurts, do it more often",
@@ -31,6 +33,11 @@ const App = () => {
   const addNew = anecdote => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+
+    setMsg(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => {
+      setMsg("")
+    }, 10000)
   }
 
   const anecdoteById = id => anecdotes.find(a => a.id === id)
@@ -55,6 +62,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification message={msg} />
 
       <Switch>
         <Route path="/anecdotes/:id">

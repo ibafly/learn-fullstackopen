@@ -4,8 +4,8 @@ import BlogForm from "./components/BlogForm"
 import LoginForm from "./components/LoginForm"
 import Notification from "./components/Notification"
 import Togglable from "./components/Togglable"
-import blogService from "./services/blogs"
 import loginService from "./services/login"
+import blogService from "./services/blogs"
 
 import { useSelector, useDispatch } from "react-redux"
 import { setMsg } from "./reducers/notificationReducer"
@@ -15,6 +15,11 @@ import {
   likesPlusOneBy,
   deleteBlogBy,
 } from "./reducers/blogReducer"
+import {
+  //  loginUserFrom,
+  logoutUser,
+  setUserFrom,
+} from "./reducers/loggedUserReducer"
 
 const App = () => {
   const dispatch = useDispatch()
@@ -22,18 +27,18 @@ const App = () => {
   const blogs = useSelector(state => state.blog)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [user, setUser] = useState(null)
+  //  const [user, setUser] = useState(null)
+  const user = useSelector(state => state.user)
 
   useEffect(() => {
-    dispatch(initiateBlogs())
-  }, [])
-
-  useEffect(() => {
-    const loggedUser = JSON.parse(window.localStorage.getItem("loggedUser"))
-    if (loggedUser) {
-      setUser(loggedUser)
-      blogService.setToken(loggedUser.token)
+    const savedUser = JSON.parse(window.localStorage.getItem("loggedUser"))
+    if (savedUser) {
+      // setUser(savedUser)
+      dispatch(setUserFrom(savedUser))
+      blogService.setToken(savedUser.token)
     }
+
+    dispatch(initiateBlogs())
   }, [])
 
   const followUsernameInput = event => {
@@ -48,7 +53,8 @@ const App = () => {
     try {
       const returnedUser = await loginService.login({ username, password })
       console.log(returnedUser)
-      setUser(returnedUser)
+      //setUser(returnedUser)
+      dispatch(setUserFrom(returnedUser))
       window.localStorage.setItem("loggedUser", JSON.stringify(returnedUser))
       blogService.setToken(returnedUser.token)
 
@@ -60,13 +66,13 @@ const App = () => {
   }
   const handleLogout = () => {
     window.localStorage.removeItem("loggedUser")
-    setUser(null)
+    dispatch(logoutUser())
   }
 
   const addBlog = async blogObj => {
     try {
       console.log(user, user.userId)
-      dispatch(createNewBlogFrom(blogObj))
+      dispatch(createNewBlogFrom(user, blogObj))
 
       togglableBlogFormRef.current.toggleVisibility() // fold blog form after successfully create a blog
 
@@ -89,13 +95,6 @@ const App = () => {
         likes: foundBlog.likes + 1,
         userId: foundBlog.userId ? foundBlog.userId.id : null, // use condition for test purpose, eliminate console error when blog has no userId field.
       }
-      //      await blogService.update(foundBlog.id, blogLikesPlusOne)
-      //      const modifiedBlogs = blogs.map(blog => {
-      //        return blog.id === foundBlog.id
-      //          ? { ...blog, likes: blog.likes + 1 }
-      //          : blog
-      //      }) // local blogs data structure, userId is expanded with user detail info.
-      //      // setBlogs(modifiedBlogs)
       dispatch(likesPlusOneBy(foundBlog.id, modifiedBlogForDb))
     } catch (excep) {
       console.log("exception:", excep)

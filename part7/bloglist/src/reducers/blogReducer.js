@@ -31,14 +31,14 @@ export const initiateBlogs = () => {
     })
   }
 }
-export const createNewBlogFrom = blogObj => {
+export const createNewBlogFrom = (user, blogObj) => {
   return async dispatch => {
     const blog = await blogService.create({ ...blogObj })
     console.log("blog", blog)
 
     dispatch({
       type: "NEW_BLOG",
-      content: blog,
+      content: { ...blog, userId: { id: user.userId, name: user.name } }, // construct to expand userId which Blog component requires
     })
   }
 }

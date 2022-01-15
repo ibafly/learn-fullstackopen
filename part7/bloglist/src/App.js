@@ -9,29 +9,31 @@ import loginService from "./services/login"
 
 import { useSelector, useDispatch } from "react-redux"
 import { setMsg } from "./reducers/notificationReducer"
+import { initiateBlogs, createNewBlogFrom } from "./reducers/blogReducer"
 
 const App = () => {
   const dispatch = useDispatch()
-  const msg = useSelector(state => state)
-  //  const [msg, setMsg] = useState(null)
-  const [blogs, setBlogs] = useState([])
+  const msg = useSelector(state => state.notification)
+  // const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(state => state.blog)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(blogs =>
-        setBlogs(
-          blogs.map(blog => {
-            return { ...blog, toggle: false }
-          })
-        )
-      )
-      .catch(err => {
-        console.log(err.response.data.error)
-      })
+    //    blogService
+    //      .getAll()
+    //      .then(blogs =>
+    //        setBlogs(
+    //          blogs.map(blog => {
+    //            return { ...blog, toggle: false }
+    //          })
+    //        )
+    //      )
+    //      .catch(err => {
+    //        console.log(err.response.data.error)
+    //      })
+    dispatch(initiateBlogs())
   }, [])
 
   useEffect(() => {
@@ -61,10 +63,6 @@ const App = () => {
       setUsername("")
       setPassword("")
     } catch (excep) {
-      //      setMsg("wrong credentials (username or password)", excep)
-      //      setTimeout(() => {
-      //        setMsg(null)
-      //      }, 5000)
       dispatch(setMsg("wrong credentials (username or password)", 5))
     }
   }
@@ -76,16 +74,16 @@ const App = () => {
   const addBlog = async blogObj => {
     try {
       console.log(user, user.userId)
-      const blog = await blogService.create({ ...blogObj })
-      console.log("blog", blog)
-      togglableBlogFormRef.current.toggleVisibility() // fold blog form after successfully create a blog
-      setBlogs(blogs.concat(blog))
+      //      const blog = await blogService.create({ ...blogObj })
+      //      console.log("blog", blog)
+      //      setBlogs(blogs.concat(blog))
+      dispatch(createNewBlogFrom(blogObj))
 
-      //      setMsg(`a new blog ${blog.title} by ${blog.author} added`)
-      //      setTimeout(() => {
-      //        setMsg(null)
-      //      }, 5000)
-      dispatch(setMsg(`a new blog ${blog.title} by ${blog.author} added`, 5))
+      togglableBlogFormRef.current.toggleVisibility() // fold blog form after successfully create a blog
+
+      dispatch(
+        setMsg(`a new blog ${blogObj.title} by ${blogObj.author} added`, 5)
+      )
     } catch (excep) {
       console.log("exception:", excep)
     }
@@ -108,7 +106,8 @@ const App = () => {
           ? { ...blog, likes: blog.likes + 1 }
           : blog
       }) // local blogs data structure, userId is expanded with user detail info.
-      setBlogs(modifiedBlogs)
+      // setBlogs(modifiedBlogs)
+      dispatch({ type: "SET_BLOGS", content: modifiedBlogs })
     } catch (excep) {
       console.log("exception:", excep)
     }
@@ -123,7 +122,8 @@ const App = () => {
       try {
         await blogService.remove(foundBlog.id)
         const mutatedBlogs = blogs.filter(blog => blog.id !== foundBlog.id)
-        setBlogs(mutatedBlogs)
+        // setBlogs(mutatedBlogs)
+        dispatch({ type: "SET_BLOGS", content: mutatedBlogs })
       } catch (excep) {
         console.log("exception:", excep)
       }
@@ -152,7 +152,8 @@ const App = () => {
     const modifiedBlogs = blogs.map(blog =>
       blog.id === blogId ? { ...blog, toggle: !blog.toggle } : blog
     )
-    setBlogs(modifiedBlogs)
+    // setBlogs(modifiedBlogs)
+    dispatch({ type: "SET_BLOGS", content: modifiedBlogs })
   }
   const userBlogSection = () => {
     return (

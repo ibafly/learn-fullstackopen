@@ -9,30 +9,22 @@ import loginService from "./services/login"
 
 import { useSelector, useDispatch } from "react-redux"
 import { setMsg } from "./reducers/notificationReducer"
-import { initiateBlogs, createNewBlogFrom } from "./reducers/blogReducer"
+import {
+  initiateBlogs,
+  createNewBlogFrom,
+  likesPlusOneBy,
+  deleteBlogBy,
+} from "./reducers/blogReducer"
 
 const App = () => {
   const dispatch = useDispatch()
   const msg = useSelector(state => state.notification)
-  // const [blogs, setBlogs] = useState([])
   const blogs = useSelector(state => state.blog)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    //    blogService
-    //      .getAll()
-    //      .then(blogs =>
-    //        setBlogs(
-    //          blogs.map(blog => {
-    //            return { ...blog, toggle: false }
-    //          })
-    //        )
-    //      )
-    //      .catch(err => {
-    //        console.log(err.response.data.error)
-    //      })
     dispatch(initiateBlogs())
   }, [])
 
@@ -74,9 +66,6 @@ const App = () => {
   const addBlog = async blogObj => {
     try {
       console.log(user, user.userId)
-      //      const blog = await blogService.create({ ...blogObj })
-      //      console.log("blog", blog)
-      //      setBlogs(blogs.concat(blog))
       dispatch(createNewBlogFrom(blogObj))
 
       togglableBlogFormRef.current.toggleVisibility() // fold blog form after successfully create a blog
@@ -92,7 +81,7 @@ const App = () => {
   const plusOneLike = async blogId => {
     try {
       const foundBlog = blogs.find(blog => blog.id === blogId)
-      const blogLikesPlusOne = {
+      const modifiedBlogForDb = {
         // remote DB data structure, userId is not expanded
         title: foundBlog.title,
         author: foundBlog.author,
@@ -100,14 +89,14 @@ const App = () => {
         likes: foundBlog.likes + 1,
         userId: foundBlog.userId ? foundBlog.userId.id : null, // use condition for test purpose, eliminate console error when blog has no userId field.
       }
-      await blogService.update(foundBlog.id, blogLikesPlusOne)
-      const modifiedBlogs = blogs.map(blog => {
-        return blog.id === foundBlog.id
-          ? { ...blog, likes: blog.likes + 1 }
-          : blog
-      }) // local blogs data structure, userId is expanded with user detail info.
-      // setBlogs(modifiedBlogs)
-      dispatch({ type: "SET_BLOGS", content: modifiedBlogs })
+      //      await blogService.update(foundBlog.id, blogLikesPlusOne)
+      //      const modifiedBlogs = blogs.map(blog => {
+      //        return blog.id === foundBlog.id
+      //          ? { ...blog, likes: blog.likes + 1 }
+      //          : blog
+      //      }) // local blogs data structure, userId is expanded with user detail info.
+      //      // setBlogs(modifiedBlogs)
+      dispatch(likesPlusOneBy(foundBlog.id, modifiedBlogForDb))
     } catch (excep) {
       console.log("exception:", excep)
     }
@@ -120,10 +109,7 @@ const App = () => {
     )
     if (confirmed) {
       try {
-        await blogService.remove(foundBlog.id)
-        const mutatedBlogs = blogs.filter(blog => blog.id !== foundBlog.id)
-        // setBlogs(mutatedBlogs)
-        dispatch({ type: "SET_BLOGS", content: mutatedBlogs })
+        dispatch(deleteBlogBy(foundBlog.id))
       } catch (excep) {
         console.log("exception:", excep)
       }

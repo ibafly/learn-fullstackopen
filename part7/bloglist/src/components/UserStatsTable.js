@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom"
 
 const UserStatsTable = ({ docs }) => {
   const reducer = (result, doc) => {
@@ -7,18 +8,18 @@ const UserStatsTable = ({ docs }) => {
       return result
     }
 
-    if (!Object.keys(result).includes(doc.userId.name)) {
-      result[doc.userId.name] = 1
+    if (!Object.keys(result).includes(doc.userId.id)) {
+      result[doc.userId.id] = { name: doc.userId.name, created: 1 }
       return result
     }
-    result[doc.userId.name] += 1
+    result[doc.userId.id].created += 1
     return result
   }
   const userStatsObj = docs.reduce(reducer, {})
 
   let users = []
-  for (const name in userStatsObj) {
-    users.push({ name, created: userStatsObj[name] })
+  for (const id in userStatsObj) {
+    users.push({ id, ...userStatsObj[id] })
   }
 
   //  console.log(docs, users)
@@ -34,7 +35,9 @@ const UserStatsTable = ({ docs }) => {
       <tbody>
         {users.map(user => (
           <tr key={user.name}>
-            <td>{user.name}</td>
+            <td>
+              <Link to={`/users/${user.id}`}>{user.name}</Link>
+            </td>
             <td>{user.created}</td>
           </tr>
         ))}

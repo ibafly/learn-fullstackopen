@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react"
-import { Switch, Route } from "react-router-dom"
+import { useRouteMatch, Switch, Route } from "react-router-dom"
 
 import Header from "./components/Header"
-//import Blog from "./components/Blog"
 import Blogs from "./components/Blogs"
 import BlogForm from "./components/BlogForm"
 import LoginForm from "./components/LoginForm"
 import Notification from "./components/Notification"
 import Togglable from "./components/Togglable"
 import UserStatsTable from "./components/UserStatsTable"
+import UserCreatedBlogList from "./components/UserCreatedBlogList"
 import loginService from "./services/login"
 import blogService from "./services/blogs"
 
@@ -145,6 +145,18 @@ const App = () => {
     // setBlogs(modifiedBlogs)
     dispatch({ type: "SET_BLOGS", content: modifiedBlogs })
   }
+
+  const userLink = useRouteMatch("/users/:id")
+  const oneBlog = userLink
+    ? blogs.find(blog => blog.userId && blog.userId.id === userLink.params.id)
+    : null
+  const userUnderView = oneBlog ? oneBlog.userId : null
+  console.log(blogs, oneBlog, userUnderView)
+  const blogListByOneUser =
+    userLink && userUnderView
+      ? blogs.filter(blog => blog.userId && blog.userId.id === userUnderView.id)
+      : null
+
   const loggedSection = () => {
     return (
       <div>
@@ -152,6 +164,12 @@ const App = () => {
         <Notification message={msg} />
 
         <Switch>
+          <Route path="/users/:id">
+            <UserCreatedBlogList
+              user={userUnderView}
+              blogs={blogListByOneUser}
+            />
+          </Route>
           <Route path="/users">
             <h2>Users</h2>
             <UserStatsTable docs={blogs} />

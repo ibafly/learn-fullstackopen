@@ -50,4 +50,31 @@ const Blog = ({
   )
 }
 
-export default Blog
+const Blogs = ({
+  blogs,
+  toggleBtnOnClick,
+  opAfterLikeBtnOnClick,
+  opAfterRemoveBtnOnClick,
+  user,
+}) => {
+  return (
+    <ul>
+      {blogs
+        .sort((blogA, blogB) => blogB.likes - blogA.likes)
+        .map(blog => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            toggleBtnOnClick={toggleBtnOnClick}
+            opAfterLikeBtnOnClick={opAfterLikeBtnOnClick}
+            opAfterRemoveBtnOnClick={opAfterRemoveBtnOnClick}
+            showRemoveBtn={
+              blog.userId && blog.userId.id === user.userId ? true : false
+            }
+          />
+        ))}
+    </ul>
+  )
+}
+
+export default Blogs

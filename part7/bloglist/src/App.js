@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from "react"
-import Blog from "./components/Blog"
+import { Switch, Route } from "react-router-dom"
+
+import Header from "./components/Header"
+//import Blog from "./components/Blog"
+import Blogs from "./components/Blogs"
 import BlogForm from "./components/BlogForm"
 import LoginForm from "./components/LoginForm"
 import Notification from "./components/Notification"
 import Togglable from "./components/Togglable"
+import UserStatsTable from "./components/UserStatsTable"
 import loginService from "./services/login"
 import blogService from "./services/blogs"
 
@@ -140,45 +145,59 @@ const App = () => {
     // setBlogs(modifiedBlogs)
     dispatch({ type: "SET_BLOGS", content: modifiedBlogs })
   }
-  const userBlogSection = () => {
+  const loggedSection = () => {
     return (
       <div>
-        <h2>blogs</h2>
+        <Header user={user} opAfterLogoutBtnOnClick={handleLogout} />
         <Notification message={msg} />
-        <h3>
-          {user ? user.name : ""} logged in
-          <button onClick={handleLogout}>logout</button>
-        </h3>
-        <h2>create new</h2>
-        <Togglable btnLabel={"create new blog"} ref={togglableBlogFormRef}>
-          <BlogForm
-            opAfterSubmit={addBlog} // do operation after form on submit
-            cancelBtnOnClick={() => {
-              togglableBlogFormRef.current.toggleVisibility()
-            }}
-          />
-        </Togglable>
-        <ul>
-          {[...blogs]
-            .sort((blogA, blogB) => blogB.likes - blogA.likes)
-            .map(blog => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                toggleBtnOnClick={changeBlogToggle}
-                opAfterLikeBtnOnClick={plusOneLike}
-                opAfterRemoveBtnOnClick={deleteBlog}
-                showRemoveBtn={
-                  blog.userId && blog.userId.id === user.userId ? true : false
-                }
+
+        <Switch>
+          <Route path="/users">
+            <h2>Users</h2>
+            <UserStatsTable docs={blogs} />
+          </Route>
+          <Route path="/">
+            <h2>create new</h2>
+            <Togglable btnLabel={"create new blog"} ref={togglableBlogFormRef}>
+              <BlogForm
+                opAfterSubmit={addBlog} // do operation after form on submit
+                cancelBtnOnClick={() => {
+                  togglableBlogFormRef.current.toggleVisibility()
+                }}
               />
-            ))}
-        </ul>
+            </Togglable>
+            <Blogs
+              blogs={blogs}
+              user={user}
+              toggleBtnOnClick={changeBlogToggle}
+              opAfterLikeBtnOnClick={plusOneLike}
+              opAfterRemoveBtnOnClick={deleteBlog}
+            />
+            <ul>
+              {
+                //          [...blogs]
+                //            .sort((blogA, blogB) => blogB.likes - blogA.likes)
+                //            .map(blog => (
+                //              <Blog
+                //                key={blog.id}
+                //                blog={blog}
+                //                toggleBtnOnClick={changeBlogToggle}
+                //                opAfterLikeBtnOnClick={plusOneLike}
+                //                opAfterRemoveBtnOnClick={deleteBlog}
+                //                showRemoveBtn={
+                //                  blog.userId && blog.userId.id === user.userId ? true : false
+                //                }
+                //              />
+                //            ))
+              }
+            </ul>
+          </Route>
+        </Switch>
       </div>
     )
   }
 
-  return <div>{user === null ? loginSection() : userBlogSection()}</div>
+  return <div>{user === null ? loginSection() : loggedSection()}</div>
 }
 
 export default App

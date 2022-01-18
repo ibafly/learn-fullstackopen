@@ -13,6 +13,11 @@ const Comment = require("../models/comment")
 // })
 
 blogsRouter.get("/", async (req, res) => {
+  const userFromToken = req.user
+  if (!userFromToken) {
+    return res.status(401).json({ error: "token missing or invalid" })
+  }
+
   const blogs = await Blog.find({}).populate("userId", "username name") // Blog.find({}) returns a Promise while await Blog.find({}) returns the result when find operation fullfilled // "username name" can be written as {username:1, name:1}
   console.log(blogs)
   //console.dir(blogs) // will show partial properties of an object
@@ -92,6 +97,11 @@ blogsRouter.delete("/:id", async (req, res) => {
 })
 
 blogsRouter.put("/:id", async (req, res) => {
+  const userFromToken = req.user
+  if (!userFromToken) {
+    return res.status(401).json({ error: "token missing or invalid" })
+  }
+
   const id = req.params.id
   const result = await Blog.findByIdAndUpdate(id, req.body, { new: true }) // option new for pass updated result instead of the founded one
   if (result) {
@@ -102,6 +112,11 @@ blogsRouter.put("/:id", async (req, res) => {
 })
 
 blogsRouter.get("/:id", async (req, res) => {
+  const userFromToken = req.user
+  if (!userFromToken) {
+    return res.status(401).json({ error: "token missing or invalid" })
+  }
+
   const id = req.params.id
   const blog = await Blog.findById(id).populate("commentIds", "content")
 
@@ -116,6 +131,12 @@ blogsRouter.post("/:id/comments", async (req, res) => {
   const id = req.params.id
   const body = req.body
 
+  const userFromToken = req.user
+  if (!userFromToken) {
+    // !token also results no userFromToken
+    return res.status(401).json({ error: "token missing or invalid" })
+  }
+
   if (!body.content) {
     return res.status(400).send({ error: "comment content missing" })
   }
@@ -123,7 +144,7 @@ blogsRouter.post("/:id/comments", async (req, res) => {
   const blog = await Blog.findById(id)
 
   if (!blog) {
-    return res.status(400).end()
+    return res.status(400).send({ error: "no blog found" })
   }
 
   const comment = new Comment({ content: body.content })

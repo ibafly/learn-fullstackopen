@@ -6,15 +6,25 @@ const reducer = (state = [], action) => {
       return action.content
     case "NEW_BLOG":
       return state.concat(action.content)
+    case "DELETE_BLOG":
+      return state.filter(blog => blog.id !== action.id)
     case "PLUS_LIKES":
       return state.map(blog =>
         blog.id === action.id ? { ...blog, likes: blog.likes + 1 } : blog
       )
-    case "DELETE_BLOG":
-      return state.filter(blog => blog.id !== action.id)
-    case "UPDATE_BLOG":
+    case "INJECT_COMMENTS":
       return state.map(blog =>
         blog.id === action.id ? { ...blog, comments: action.content } : blog
+      )
+    case "NEW_COMMENT":
+      return state.map(blog =>
+        blog.id === action.id
+          ? {
+              ...blog,
+              commentIds: blog.commentIds.concat(action.content.id),
+              comments: blog.comments.concat(action.content),
+            }
+          : blog
       )
     default:
       return state
@@ -23,7 +33,7 @@ const reducer = (state = [], action) => {
 
 const format = blogs =>
   blogs.map(blog => {
-    return { ...blog, toggle: false }
+    return { ...blog, toggle: false, comments: [] }
   })
 
 export const initiateBlogs = () => {
@@ -61,7 +71,13 @@ export const deleteBlogBy = id => {
 export const injectCommentsToBlogBy = id => {
   return async dispatch => {
     const blog = await blogService.getOne(id)
-    dispatch({ type: "UPDATE_BLOG", id, content: blog.commentIds })
+    dispatch({ type: "INJECT_COMMENTS", id, content: blog.commentIds })
+  }
+}
+export const createNewCommentTo = (id, commentObj) => {
+  return async dispatch => {
+    const comment = await blogService.createComment(id, commentObj)
+    dispatch({ type: "NEW_COMMENT", id, content: comment })
   }
 }
 export default reducer

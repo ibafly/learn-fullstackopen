@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 
-const Blog = ({ blog, opInUseEffect }) => {
+const Blog = ({ blog, opInUseEffect, children }) => {
   if (!blog) {
     return null
   }
@@ -20,6 +20,7 @@ const Blog = ({ blog, opInUseEffect }) => {
       <div>added by {blog.userId ? blog.userId.name : "Anonymous"}</div>
 
       <h3>comments</h3>
+      {children}
       <ul>
         {blog.comments &&
           blog.comments.map(comment => (

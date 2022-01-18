@@ -10,6 +10,7 @@ import Togglable from "./components/Togglable"
 import UserStatsTable from "./components/UserStatsTable"
 import UserCreatedBlogList from "./components/UserCreatedBlogList"
 import Blog from "./components/Blog"
+import CommentForm from "./components/CommentForm"
 import loginService from "./services/login"
 import blogService from "./services/blogs"
 
@@ -21,6 +22,7 @@ import {
   likesPlusOneBy,
   deleteBlogBy,
   injectCommentsToBlogBy,
+  createNewCommentTo,
 } from "./reducers/blogReducer"
 import {
   //  loginUserFrom,
@@ -108,12 +110,6 @@ const App = () => {
     }
   }
 
-  // const addComment = async blogId => {
-  //   try {
-  //   } catch (excep) {
-  //     console.log("exception:", excep)
-  //   }
-  // }
   const deleteBlog = async blogId => {
     const foundBlog = blogs.find(blog => blog.id === blogId)
     const confirmed = window.confirm(
@@ -175,6 +171,9 @@ const App = () => {
   const fetchComments = id => {
     dispatch(injectCommentsToBlogBy(id))
   }
+  const addComment = (id, value) => {
+    dispatch(createNewCommentTo(id, { content: value })) // note the structure  that backend requires of comment object
+  }
 
   console.log(blogUnderView)
 
@@ -186,7 +185,9 @@ const App = () => {
 
         <Switch>
           <Route path="/blogs/:id">
-            <Blog blog={blogUnderView} opInUseEffect={fetchComments}></Blog>
+            <Blog blog={blogUnderView} opInUseEffect={fetchComments}>
+              <CommentForm blog={blogUnderView} opAfterSubmit={addComment} />
+            </Blog>
           </Route>
           <Route path="/users/:id">
             <UserCreatedBlogList

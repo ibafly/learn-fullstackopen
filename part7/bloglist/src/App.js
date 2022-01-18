@@ -20,6 +20,7 @@ import {
   createNewBlogFrom,
   likesPlusOneBy,
   deleteBlogBy,
+  injectCommentsToBlogBy,
 } from "./reducers/blogReducer"
 import {
   //  loginUserFrom,
@@ -107,6 +108,12 @@ const App = () => {
     }
   }
 
+  // const addComment = async blogId => {
+  //   try {
+  //   } catch (excep) {
+  //     console.log("exception:", excep)
+  //   }
+  // }
   const deleteBlog = async blogId => {
     const foundBlog = blogs.find(blog => blog.id === blogId)
     const confirmed = window.confirm(
@@ -159,9 +166,17 @@ const App = () => {
       : null
 
   const blogLink = useRouteMatch("/blogs/:id")
+  // if (blogLink) {
+  //   dispatch(injectCommentsToBlogBy(blogLink.params.id))
+  // }
   const blogUnderView = blogLink
     ? blogs.find(blog => blog.id === blogLink.params.id)
     : null
+  const fetchComments = id => {
+    dispatch(injectCommentsToBlogBy(id))
+  }
+
+  console.log(blogUnderView)
 
   const loggedSection = () => {
     return (
@@ -171,7 +186,7 @@ const App = () => {
 
         <Switch>
           <Route path="/blogs/:id">
-            <Blog blog={blogUnderView}></Blog>
+            <Blog blog={blogUnderView} opInUseEffect={fetchComments}></Blog>
           </Route>
           <Route path="/users/:id">
             <UserCreatedBlogList

@@ -11,6 +11,12 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
+const getOne = async id => {
+  // one blog with comments expanded
+  const res = await axios.get(`${baseUrl}/${id}`)
+  return res.data
+}
+
 const create = async newObj => {
   // const token = JSON.parse(window.localStorage.getItem("loggedUser")).token // item loggedUser already parsed once in useEffect
   // const authorization = `bearer ` + token // extracted to setToken
@@ -44,4 +50,4 @@ const remove = async id => {
   return res.data
 }
 
-export default { getAll, create, update, remove, setToken }
+export default { getAll, getOne, create, update, remove, setToken }

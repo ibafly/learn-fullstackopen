@@ -2,6 +2,7 @@
 const blogsRouter = require("express").Router()
 const Blog = require("../models/blog")
 const User = require("../models/user")
+const Comment = require("../models/comment")
 // const jwt = require("jsonwebtoken")
 
 // blogsRouter.get("/", (request, response) => {
@@ -99,5 +100,48 @@ blogsRouter.put("/:id", async (req, res) => {
     res.status(400).end()
   }
 })
+
+blogsRouter.get("/:id", async (req, res) => {
+  const id = req.params.id
+  const blog = await Blog.findById(id).populate("commentIds", "content")
+
+  if (blog) {
+    res.status(200).json(blog)
+  } else {
+    res.status(400).end()
+  }
+})
+
+blogsRouter.post("/:id/comments", async (req, res) => {
+  const id = req.params.id
+  const body = req.body
+
+  if (!body.content) {
+    return res.status(400).send({ error: "comment content missing" })
+  }
+
+  const blog = await Blog.findById(id)
+
+  if (!blog) {
+    return res.status(400).end()
+  }
+
+  const comment = new Comment({ content: body.content })
+  const savedComment = await comment.save()
+  blog.commentIds = blog.commentIds.concat(savedComment._id)
+  await blog.save()
+
+  res.status(201).json(savedComment)
+})
+
+// blogsRouter.get("/:id/comments", async (req, res) => {
+//   const id = req.params.id
+//   const blog = await Blog.findById(id).populate("commentIds", "content")
+//   if (blog) {
+//     res.status(200).json(blog.commentIds)
+//   } else {
+//     res.status(400).end()
+//   }
+// })
 
 module.exports = blogsRouter

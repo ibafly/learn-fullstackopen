@@ -7,11 +7,15 @@ const reducer = (state = [], action) => {
     case "NEW_BLOG":
       return state.concat(action.content)
     case "PLUS_LIKES":
-      return state.map(blog => {
-        return blog.id === action.id ? { ...blog, likes: blog.likes + 1 } : blog
-      })
+      return state.map(blog =>
+        blog.id === action.id ? { ...blog, likes: blog.likes + 1 } : blog
+      )
     case "DELETE_BLOG":
       return state.filter(blog => blog.id !== action.id)
+    case "UPDATE_BLOG":
+      return state.map(blog =>
+        blog.id === action.id ? { ...blog, comments: action.content } : blog
+      )
     default:
       return state
   }
@@ -52,6 +56,12 @@ export const deleteBlogBy = id => {
   return async dispatch => {
     await blogService.remove(id)
     dispatch({ type: "DELETE_BLOG", id })
+  }
+}
+export const injectCommentsToBlogBy = id => {
+  return async dispatch => {
+    const blog = await blogService.getOne(id)
+    dispatch({ type: "UPDATE_BLOG", id, content: blog.commentIds })
   }
 }
 export default reducer

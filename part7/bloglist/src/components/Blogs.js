@@ -1,6 +1,7 @@
 import React from "react"
+import { Link } from "react-router-dom"
 
-const Blog = ({
+const BlogEntry = ({
   blog,
   toggleBtnOnClick,
   opAfterLikeBtnOnClick,
@@ -24,7 +25,9 @@ const Blog = ({
   }
   return (
     <li data-id={blog.id} style={blogStyle}>
-      {blog.title} {blog.author}
+      <Link to={`/blogs/${blog.id}`}>
+        {blog.title} {blog.author}
+      </Link>
       <button className="toggle" onClick={toggleBtnOnClick}>
         {blog.toggle ? "hide" : "view"}
       </button>
@@ -62,7 +65,7 @@ const Blogs = ({
       {blogs
         .sort((blogA, blogB) => blogB.likes - blogA.likes)
         .map(blog => (
-          <Blog
+          <BlogEntry
             key={blog.id}
             blog={blog}
             toggleBtnOnClick={toggleBtnOnClick}

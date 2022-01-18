@@ -9,6 +9,7 @@ import Notification from "./components/Notification"
 import Togglable from "./components/Togglable"
 import UserStatsTable from "./components/UserStatsTable"
 import UserCreatedBlogList from "./components/UserCreatedBlogList"
+import Blog from "./components/Blog"
 import loginService from "./services/login"
 import blogService from "./services/blogs"
 
@@ -157,6 +158,11 @@ const App = () => {
       ? blogs.filter(blog => blog.userId && blog.userId.id === userUnderView.id)
       : null
 
+  const blogLink = useRouteMatch("/blogs/:id")
+  const blogUnderView = blogLink
+    ? blogs.find(blog => blog.id === blogLink.params.id)
+    : null
+
   const loggedSection = () => {
     return (
       <div>
@@ -164,6 +170,9 @@ const App = () => {
         <Notification message={msg} />
 
         <Switch>
+          <Route path="/blogs/:id">
+            <Blog blog={blogUnderView}></Blog>
+          </Route>
           <Route path="/users/:id">
             <UserCreatedBlogList
               user={userUnderView}

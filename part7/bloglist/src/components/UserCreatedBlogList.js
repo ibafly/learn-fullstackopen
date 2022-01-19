@@ -1,6 +1,8 @@
 import React from "react"
 //import { Route, Link } from "react-router-dom"
 
+import { List, ListItem, ListItemText } from "@mui/material"
+
 const UserCreatedBlogList = ({ user, blogs }) => {
   if (!user) {
     // use conditional rendering to avoid `user is null` error in browser console when user prop waits async operation finishs
@@ -11,11 +13,19 @@ const UserCreatedBlogList = ({ user, blogs }) => {
     <div>
       <h2>{user.name}</h2>
       <h3>added blogs</h3>
-      <ul>
+      {/* <ul>
         {blogs.map(blog => (
           <li key={blog.id}>{blog.title}</li>
         ))}
-      </ul>
+      </ul> */}
+
+      <List>
+        {blogs.map(blog => (
+          <ListItem key={blog.id}>
+            <ListItemText primary={blog.title} />
+          </ListItem>
+        ))}
+      </List>
     </div>
   )
 }

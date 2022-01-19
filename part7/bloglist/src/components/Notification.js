@@ -1,23 +1,31 @@
 import React from "react"
+
+import { Alert } from "@mui/material"
+
 const Notification = ({ message }) => {
-  const msgStyle = {
-    background: "gray",
-    padding: "5px",
-    fontSize: "16px",
-    fontWeight: "bold",
-    color: "green",
-    border: "solid 4px",
-    borderRadius: "4px",
-  }
+  // const msgStyle = {
+  //   background: "gray",
+  //   padding: "5px",
+  //   fontSize: "16px",
+  //   fontWeight: "bold",
+  //   color: "green",
+  //   border: "solid 4px",
+  //   borderRadius: "4px",
+  // }
   return !message ? null : (
     <p
-      style={{
-        ...msgStyle,
-        color: message.includes("wrong") ? "red" : "green",
-      }}
+      // style={{
+      //   ...msgStyle,
+      //   color: message.includes("wrong") ? "red" : "green",
+      // }}
       className={"notification"}
     >
-      {message}
+      <Alert
+        variant="outlined"
+        severity={message.includes("wrong") ? "error" : "success"}
+      >
+        {message}
+      </Alert>
     </p>
   )
 }

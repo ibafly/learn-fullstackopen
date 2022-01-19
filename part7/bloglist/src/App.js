@@ -30,6 +30,8 @@ import {
   setUserFrom,
 } from "./reducers/loggedUserReducer"
 
+import { Box } from "@mui/material"
+
 const App = () => {
   const dispatch = useDispatch()
   const msg = useSelector(state => state.notification)
@@ -95,6 +97,7 @@ const App = () => {
 
   const plusOneLike = async blogId => {
     try {
+      console.log(blogId)
       const foundBlog = blogs.find(blog => blog.id === blogId)
       const modifiedBlogForDb = {
         // remote DB data structure, userId is not expanded
@@ -126,7 +129,7 @@ const App = () => {
 
   const loginSection = () => {
     return (
-      <div>
+      <Box sx={{ textAlign: "center" }}>
         <h2>log in to application</h2>
         <Notification message={msg} />
         <LoginForm
@@ -136,7 +139,7 @@ const App = () => {
           passwordInputOnChange={followPasswordInput}
           formOnSubmit={handleLogin}
         />
-      </div>
+      </Box>
     )
   }
 
@@ -179,13 +182,19 @@ const App = () => {
 
   const loggedSection = () => {
     return (
-      <div>
+      // <div>
+      <Box sx={{ w: "100%", mx: "auto" }}>
         <Header user={user} opAfterLogoutBtnOnClick={handleLogout} />
+        <h2>blogs</h2>
         <Notification message={msg} />
 
         <Switch>
           <Route path="/blogs/:id">
-            <Blog blog={blogUnderView} opInUseEffect={fetchComments}>
+            <Blog
+              blog={blogUnderView}
+              opInUseEffect={fetchComments}
+              opAfterLikeBtnOnClick={plusOneLike}
+            >
               <CommentForm blog={blogUnderView} opAfterSubmit={addComment} />
             </Blog>
           </Route>
@@ -236,7 +245,8 @@ const App = () => {
             </ul>
           </Route>
         </Switch>
-      </div>
+        {/* </div> */}
+      </Box>
     )
   }
 

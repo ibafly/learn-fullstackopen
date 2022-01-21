@@ -1,18 +1,9 @@
 import React from "react"
-import { gql, useQuery } from "@apollo/client"
-
-const ALL_BLOGS = gql`
-  query {
-    allBooks {
-      title
-      author
-      published
-    }
-  }
-`
+import { useQuery } from "@apollo/client"
+import { ALL_BOOKS } from "../queries"
 
 const Books = props => {
-  const result = useQuery(ALL_BLOGS, {
+  const result = useQuery(ALL_BOOKS, {
     pollInterval: 2000, // to update cache (1/n): poll server every 2 seconds. pros: update other users' changes automatically, cons: cost lots web traffic.
   })
   if (!props.show) {

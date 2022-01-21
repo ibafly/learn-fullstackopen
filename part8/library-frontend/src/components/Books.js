@@ -12,7 +12,9 @@ const ALL_BLOGS = gql`
 `
 
 const Books = props => {
-  const result = useQuery(ALL_BLOGS)
+  const result = useQuery(ALL_BLOGS, {
+    pollInterval: 2000, // to update cache (1/n): poll server every 2 seconds. pros: update other users' changes automatically, cons: cost lots web traffic.
+  })
   if (!props.show) {
     return null
   }

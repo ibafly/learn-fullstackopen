@@ -116,6 +116,7 @@ const typeDefs = gql`
       author: String!
       genres: [String!]!
     ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
@@ -129,6 +130,21 @@ const resolvers = {
         authors = authors.concat(author)
       }
       return book
+    },
+    editAuthor: (root, args) => {
+      const author = authors.find(author => author.name === args.name)
+      if (!author) {
+        return null
+      }
+      author.born = args.setBornTo // author is a reference to the found item in authors array, it would be a copy if authors.find() returns a primitive
+      //   let foo = ["a", { bar: 1 }]
+      //   let a = foo.find(val => val === "a")
+      //   a = "b"
+      //   console.log(foo[0]) //still "a"
+      //   let obj = foo.find(val => val.bar)
+      //   obj.bar = 2
+      //   console.log(foo[1].bar) //2 - reference
+      return author
     },
   },
   Query: {

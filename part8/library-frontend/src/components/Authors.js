@@ -1,17 +1,26 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
+import Select from "react-select"
 import { useField } from "../hooks"
 import { useQuery, useMutation } from "@apollo/client"
 import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries"
 
-const Authors = props => {
-  const { reset: resetName, ...name } = useField("text")
+const Authors = ({ show, setError }) => {
+  const [selectedOption, setSelectedOption] = useState(null)
+  // const { reset: resetName, ...name } = useField("text")
   const { reset: resetBorn, ...born } = useField("text")
   const result = useQuery(ALL_AUTHORS)
-  const [setAuthorBorn] = useMutation(EDIT_AUTHOR, {
+  const [setAuthorBorn, res] = useMutation(EDIT_AUTHOR, {
+    // res as the result of query
     refetchQueries: [{ query: ALL_AUTHORS }],
   })
-
-  if (!props.show) {
+  useEffect(() => {
+    if (res.data && res.data.editAuthor === null) {
+      // returned data error handling
+      setError("author not found")
+    }
+  }, [res.data, setError])
+  // put setError in useEffect array or comment this line with eslint-disable-line
+  if (!show) {
     return null
   }
   if (result.loading) {
@@ -19,19 +28,18 @@ const Authors = props => {
   }
 
   const authors = result.data.allAuthors
+  const options = authors.map(author => {
+    return { value: author.name, label: author.name }
+  })
   const handleSubmit = e => {
     e.preventDefault()
-    const result = setAuthorBorn({
-      variables: { name: name.value, born: Number(born.value) },
+    console.log(selectedOption)
+    setAuthorBorn({
+      variables: { name: selectedOption.value, born: Number(born.value) },
     })
-    console.log("enter handleSubmit")
-    if (result.loading) {
-      console.log("add book...")
-    } else {
-      console.log(result, result.error)
-    }
 
-    resetName()
+    // resetName()
+    setSelectedOption(null)
     resetBorn()
   }
   return (
@@ -55,9 +63,14 @@ const Authors = props => {
       </table>
       <h3>Set birthyear</h3>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="name">
+        {/* <label htmlFor="name">
           name <input id="name" {...name} />
-        </label>
+        </label> */}
+        <Select
+          defaultValue={selectedOption}
+          onChange={setSelectedOption}
+          options={options}
+        />
         <br />
         <label htmlFor="born">
           born <input id="born" {...born} />

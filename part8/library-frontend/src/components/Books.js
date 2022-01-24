@@ -4,7 +4,7 @@ import { ALL_BOOKS } from "../queries"
 
 const Books = props => {
   const result = useQuery(ALL_BOOKS, {
-    pollInterval: 2000, // to update cache (1/n): poll server every 2 seconds. pros: update other users' changes automatically, cons: cost lots web traffic.
+    pollInterval: 8000, // to update cache (1/n): poll server every 2 seconds. pros: update other users' changes automatically, cons: cost lots web traffic.
   })
   if (!props.show) {
     return null
@@ -29,7 +29,7 @@ const Books = props => {
           {books.map(a => (
             <tr key={a.title}>
               <td>{a.title}</td>
-              <td>{a.author}</td>
+              <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
           ))}

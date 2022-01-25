@@ -1,20 +1,16 @@
 import React, { useState } from "react"
-import { useQuery } from "@apollo/client"
-import { ALL_BOOKS } from "../queries"
 
-const Books = props => {
+const Books = ({ show, books }) => {
   const [selectedGenre, setSelectedGenre] = useState("all genres")
-  const result = useQuery(ALL_BOOKS, {
-    pollInterval: 8000, // to update cache (1/n): poll server every 2 seconds. pros: update other users' changes automatically, cons: cost lots web traffic.
-  })
-  if (!props.show) {
+
+  if (!show) {
     return null
   }
-  if (result.loading) {
+  if (!books) {
     return <div>loading...</div>
   }
 
-  let genres = result.data.allBooks.reduce(
+  let genres = books.reduce(
     (calculated, element) => {
       return [...calculated, ...element.genres]
     },
@@ -22,10 +18,10 @@ const Books = props => {
   )
   genres = Array.from(new Set(genres))
 
-  const books =
+  const selectedBooks =
     selectedGenre === "all genres"
-      ? result.data.allBooks
-      : result.data.allBooks.filter(book => book.genres.includes(selectedGenre))
+      ? books
+      : books.filter(book => book.genres.includes(selectedGenre))
 
   return (
     <div>
@@ -42,7 +38,7 @@ const Books = props => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map(book => (
+          {selectedBooks.map(book => (
             <tr key={book.title}>
               <td>{book.title}</td>
               <td>{book.author.name}</td>

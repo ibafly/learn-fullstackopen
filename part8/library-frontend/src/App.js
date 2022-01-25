@@ -3,18 +3,30 @@ import Authors from "./components/Authors"
 import Books from "./components/Books"
 import Login from "./components/Login"
 import NewBook from "./components/NewBook"
-import { useApolloClient, useMutation } from "@apollo/client"
-import { LOGIN } from "./queries"
+import Recommend from "./components/recommend"
+import { useApolloClient, useMutation, useQuery } from "@apollo/client"
+import { ALL_BOOKS, LOGIN } from "./queries"
 
 const App = () => {
   const [page, setPage] = useState("authors")
   const [error, setError] = useState("")
+
   const [token, setToken] = useState(null)
-  const [login, result] = useMutation(LOGIN, {
+  const [login, resultOfLogin] = useMutation(LOGIN, {
     onError: error => {
       setError(error.graphQLErrors[0].message)
     },
+    // refetchQueries: [{ query: ME }],
   })
+
+  const [books, setBooks] = useState([])
+  const resultOfAllBooks = useQuery(ALL_BOOKS, {
+    // pollInterval: 8000, // to update cache (1/n): poll server every 2 seconds. pros: update other users' changes automatically, cons: cost lots web traffic.
+  })
+  // if (!resultOfAllBooks.loading) {
+  //   setBooks(resultOfAllBooks.data.allBooks)
+  // }
+
   const client = useApolloClient()
 
   useEffect(() => {
@@ -25,14 +37,17 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    if (result.data) {
-      const returnedToken = result.data.login.value
+    if (resultOfLogin.data) {
+      const returnedToken = resultOfLogin.data.login.value
       setToken(returnedToken)
       window.localStorage.setItem("loggedUserToken", returnedToken)
 
       setPage("books")
     }
-  }, [result.data]) // eslint-disable-line
+    if (resultOfAllBooks.data) {
+      setBooks(resultOfAllBooks.data.allBooks)
+    }
+  }, [resultOfLogin.data, resultOfAllBooks.data]) // eslint-disable-line
 
   const handleLogin = async (username, password) => {
     login({ variables: { username, password } })
@@ -54,6 +69,7 @@ const App = () => {
         {token ? (
           <>
             <button onClick={() => setPage("add")}>add book</button>
+            <button onClick={() => setPage("recommend")}>recommend</button>
             <button onClick={handleLogout}>log out</button>
           </>
         ) : (
@@ -64,11 +80,17 @@ const App = () => {
       <div>{error}</div>
       <Authors show={page === "authors"} setError={setError} />
 
-      <Books show={page === "books"} />
+      <Books show={page === "books"} books={books} />
 
       <Login show={page === "login"} opAfterFormOnSubmit={handleLogin} />
 
-      <NewBook show={page === "add"} />
+      {token && (
+        <>
+          <NewBook show={page === "add"} />
+
+          <Recommend show={page === "recommend"} allBooks={books} />
+        </>
+      )}
     </div>
   )
 }

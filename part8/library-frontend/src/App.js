@@ -4,8 +4,13 @@ import Books from "./components/Books"
 import Login from "./components/Login"
 import NewBook from "./components/NewBook"
 import Recommend from "./components/recommend"
-import { useApolloClient, useMutation, useQuery } from "@apollo/client"
-import { ALL_BOOKS, LOGIN } from "./queries"
+import {
+  useApolloClient,
+  useMutation,
+  useQuery,
+  useLazyQuery,
+} from "@apollo/client"
+import { ME, ALL_BOOKS, BOOKS_BY_GENRE, LOGIN } from "./queries"
 
 const App = () => {
   const [page, setPage] = useState("authors")
@@ -18,6 +23,8 @@ const App = () => {
     },
     // refetchQueries: [{ query: ME }],
   })
+  const [currentUser, setCurrentUser] = useState(null)
+  const resultOfMe = useQuery(ME)
 
   const [books, setBooks] = useState([])
   const resultOfAllBooks = useQuery(ALL_BOOKS, {
@@ -26,6 +33,9 @@ const App = () => {
   // if (!resultOfAllBooks.loading) {
   //   setBooks(resultOfAllBooks.data.allBooks)
   // }
+  const [selectedGenre, setSelectedGenre] = useState("all genres")
+
+  const [booksByGenre, resultOfBooksByGenre] = useLazyQuery(BOOKS_BY_GENRE)
 
   const client = useApolloClient()
 
@@ -44,10 +54,40 @@ const App = () => {
 
       setPage("books")
     }
+  }, [resultOfLogin.data]) // eslint-disable-line
+
+  const [favoriteGenreBooks, setFavoriteGenreBooks] = useState(null)
+  useEffect(() => {
+    console.log(resultOfMe.data, currentUser)
+
+    if (resultOfMe.data) {
+      setCurrentUser(resultOfMe.data.me)
+    }
+    if (currentUser) {
+      booksByGenre({ variables: { genre: currentUser.favoriteGenre } })
+    }
+    if (resultOfBooksByGenre.data) {
+      setFavoriteGenreBooks(resultOfBooksByGenre.data.allBooks)
+    }
+  }, [resultOfMe.data, resultOfBooksByGenre.data, currentUser]) //eslint-disable-line
+
+  useEffect(() => {
     if (resultOfAllBooks.data) {
       setBooks(resultOfAllBooks.data.allBooks)
     }
-  }, [resultOfLogin.data, resultOfAllBooks.data]) // eslint-disable-line
+  }, [resultOfAllBooks.data]) // eslint-disable-line
+
+  useEffect(() => {
+    resultOfBooksByGenre.refetch()
+  }, [books]) // eslint-disable-line
+
+  const selectGenre = genre => {
+    setSelectedGenre(genre)
+  }
+
+  useEffect(() => {
+    resultOfAllBooks.refetch()
+  }, [selectGenre])
 
   const handleLogin = async (username, password) => {
     login({ variables: { username, password } })
@@ -80,7 +120,12 @@ const App = () => {
       <div>{error}</div>
       <Authors show={page === "authors"} setError={setError} />
 
-      <Books show={page === "books"} books={books} />
+      <Books
+        show={page === "books"}
+        books={books}
+        btnOnClick={selectGenre}
+        selectedGenre={selectedGenre}
+      />
 
       <Login show={page === "login"} opAfterFormOnSubmit={handleLogin} />
 
@@ -88,7 +133,11 @@ const App = () => {
         <>
           <NewBook show={page === "add"} />
 
-          <Recommend show={page === "recommend"} allBooks={books} />
+          <Recommend
+            show={page === "recommend"}
+            currentUser={currentUser}
+            books={favoriteGenreBooks ? favoriteGenreBooks : null}
+          />
         </>
       )}
     </div>

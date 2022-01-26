@@ -3,30 +3,31 @@ import { useLazyQuery, useQuery } from "@apollo/client"
 import { ME } from "../queries"
 import { BOOKS_BY_GENRE } from "../queries"
 
-const Recommend = ({ show, allBooks }) => {
-  const [currentUser, setCurrentUser] = useState(null)
-  const [books, setBooks] = useState(null)
-  const resultOfMe = useQuery(ME)
-  const [booksByGenre, result] = useLazyQuery(BOOKS_BY_GENRE)
-  console.log(currentUser, books)
-  useEffect(() => {
-    console.log(resultOfMe.data, currentUser)
+const Recommend = ({ show, books, currentUser, allBooks }) => {
+  //   const [currentUser, setCurrentUser] = useState(null)
+  //   const [books, setBooks] = useState(null)
+  //   const resultOfMe = useQuery(ME)
+  //   const [booksByGenre, result] = useLazyQuery(BOOKS_BY_GENRE)
+  //   console.log(currentUser, books)
+  //   useEffect(() => {
+  //     console.log(resultOfMe.data, currentUser)
 
-    if (resultOfMe.data) {
-      setCurrentUser(resultOfMe.data.me)
-    }
-    if (currentUser) {
-      booksByGenre({ variables: { genre: currentUser.favoriteGenre } })
-    }
-    if (result.data) {
-      setBooks(result.data.allBooks)
-    }
-  }, [resultOfMe.data, result.data, currentUser]) //eslint-disable-line
+  //     if (resultOfMe.data) {
+  //       setCurrentUser(resultOfMe.data.me)
+  //     }
+  //     if (currentUser) {
+  //       booksByGenre({ variables: { genre: currentUser.favoriteGenre } })
+  //     }
+  //     if (result.data) {
+  //       setBooks(result.data.allBooks)
+  //     }
+  //   }, [resultOfMe.data, result.data, currentUser]) //eslint-disable-line
 
   if (!show) {
     return null
   }
-  if (result.loading || !currentUser) {
+  //   if (result.loading || !currentUser) {
+  if (!currentUser) {
     return <div>loading...</div>
   }
 

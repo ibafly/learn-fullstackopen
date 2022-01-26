@@ -1,7 +1,11 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+// import { useLazyQuery, useQuery } from "@apollo/client"
+// import { ALL_BOOKS } from "../queries"
 
-const Books = ({ show, books }) => {
-  const [selectedGenre, setSelectedGenre] = useState("all genres")
+const Books = ({ show, books, btnOnClick, selectedGenre }) => {
+  // useEffect(() => {
+  //   useLazyQuery(ALL_BOOKS)
+  // }, [selectedGenre])
 
   if (!show) {
     return null
@@ -52,7 +56,8 @@ const Books = ({ show, books }) => {
           <button
             key={genre}
             onClick={() => {
-              setSelectedGenre(genre)
+              // setSelectedGenre(genre)
+              btnOnClick(genre)
             }}
           >
             {genre}

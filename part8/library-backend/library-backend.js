@@ -10,6 +10,7 @@ const {
 const {
   ApolloServerPluginLandingPageGraphQLPlayground,
 } = require("apollo-server-core")
+const DataLoader = require("dataloader")
 
 const express = require("express")
 const http = require("http")
@@ -90,6 +91,15 @@ async function startApolloServer() {
       bookAdded: Book!
     }
   `
+
+  const batchBookCount = async authorIds => {
+    const books = await Book.find({ author: { $in: authorIds } })
+    const AuthorIdsOfBooks = books.map(book => book.author.toString())
+    return authorIds.map(
+      uniqId => AuthorIdsOfBooks.filter(id => id === uniqId).length
+    )
+  }
+  // const bookCountLoader = new DataLoader(batchBookCount) // new DataLoader should be initialized in object returned by apollo server context.
 
   const resolvers = {
     Mutation: {
@@ -241,10 +251,13 @@ async function startApolloServer() {
       me: (root, args, context) => context.currentUser,
     },
     Author: {
-      bookCount: async root => {
-        const books = await Book.find({ author: root.id })
-        // books.filter(book => book.author === root.name).length,
-        return books.length
+      // bookCount: async root => {
+      //   const books = await Book.find({ author: root.id })
+      //   // books.filter(book => book.author === root.name).length,
+      //   return books.length
+      // },
+      bookCount: async (root, args, context) => {
+        return await context.bookCountLoader.load(root.id)
       },
     },
   }
@@ -276,7 +289,7 @@ async function startApolloServer() {
       if (auth && auth.toLowerCase().startsWith("bearer ")) {
         const decodedToken = jwt.verify(auth.slice(7), JWT_SECRET_KEY)
         const currentUser = await User.findById(decodedToken.id)
-        return { currentUser }
+        return { currentUser, bookCountLoader: new DataLoader(batchBookCount) }
       }
     },
 

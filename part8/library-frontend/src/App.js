@@ -114,7 +114,7 @@ const App = () => {
     onSubscriptionData: ({ subscriptionData }) => {
       const addedBook = subscriptionData.data.bookAdded
       // notify()
-      window.alert(`${addedBook.published} added`)
+      window.alert(`${addedBook.title} added by ${addedBook.author.name}`)
       updateCacheWith(addedBook)
     },
   })

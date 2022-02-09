@@ -11,6 +11,7 @@
     "@graphql-tools/schema": "^8.3.1",
     "apollo-server-core": "^3.6.2",
     "apollo-server-express": "^3.6.2",
+    "dataloader": "^2.0.0",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "graphql": "^16.2.0",

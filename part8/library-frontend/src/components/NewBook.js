@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useMutation } from "@apollo/client"
-import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS, BOOKS_BY_GENRE } from "../queries"
+import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from "../queries"
 
 const NewBook = props => {
   const [title, setTitle] = useState("")
@@ -12,8 +12,7 @@ const NewBook = props => {
   const [createBook] = useMutation(ADD_BOOK, {
     refetchQueries: [
       { query: ALL_AUTHORS },
-      // {query:ALL_BOOKS} // 8.22 requirement: When new genre selection is not done, the view does not have to be updated.
-      { query: BOOKS_BY_GENRE },
+      { query: ALL_BOOKS }, // 8.22 requirement: When new genre selection is not done, the view does not have to be updated.
     ], // to update cache (2/n): use mutaition hook's refetchQueries parameter. fetch again after everytime new book created. pros: save web traffic, cons: can't see other's update immediately.
   })
 

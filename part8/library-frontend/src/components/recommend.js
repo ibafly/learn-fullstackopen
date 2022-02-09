@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react"
-import { useLazyQuery, useQuery } from "@apollo/client"
-import { ME } from "../queries"
-import { BOOKS_BY_GENRE } from "../queries"
+import React from "react"
+// import  { useState, useEffect } from "react"
+// import { useLazyQuery, useQuery } from "@apollo/client"
+// import { ME } from "../queries"
+// import { BOOKS_BY_GENRE } from "../queries"
 
 const Recommend = ({ show, books, currentUser, allBooks }) => {
   //   const [currentUser, setCurrentUser] = useState(null)

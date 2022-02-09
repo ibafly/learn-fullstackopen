@@ -40,8 +40,31 @@ export const ADD_BOOK = gql`
       author {
         name
       }
+      genres
+      id
     }
   }
+`
+
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title
+    published
+    genres
+    author {
+      name
+      born
+    }
+  }
+`
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+
+  ${BOOK_DETAILS}
 `
 
 export const EDIT_AUTHOR = gql`

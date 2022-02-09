@@ -2,13 +2,37 @@ import React from "react"
 import ReactDOM from "react-dom"
 import App from "./App"
 
+// import {
+//   SubscriptionClient,
+//   addGraphQLSubscriptions,
+// } from "subscriptions-transport-ws"
+
 import {
   ApolloClient,
   ApolloProvider,
+  // ApolloLink,
+  split,
   HttpLink,
   InMemoryCache,
 } from "@apollo/client"
 import { setContext } from "@apollo/client/link/context"
+
+import { getMainDefinition } from "@apollo/client/utilities"
+import { WebSocketLink } from "@apollo/client/link/ws"
+
+const PORT = 4000
+const wsLink = new WebSocketLink({
+  uri: `ws://localhost:${PORT}/graphql`,
+  options: {
+    reconnect: true,
+    // connectionParams: () => {
+    //   const token = localStorage.getItem("loggedUserToken")
+    //   return {
+    //     authorization: token ? `bearer ${token}` : null,
+    //   }
+    // },
+  },
+})
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("loggedUserToken")
@@ -20,12 +44,43 @@ const authLink = setContext((_, { headers }) => {
   }
 })
 
-const httpLink = new HttpLink({ uri: "http://localhost:4000" })
+const httpLink = new HttpLink({ uri: `http://localhost:${PORT}/graphql` })
 
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query)
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    )
+  },
+  wsLink,
+  // httpLink
+  authLink.concat(httpLink)
+)
+// const networkInterface = createNetworkInterface({
+//   uri: "http://localhost:4000/graphql",
+// })
+// networkInterface.use([
+//   {
+//     applyMiddleware(req, next) {
+//       setTimeout(next, 500)
+//     },
+//   },
+// ])
+// const wsClient = new SubscriptionClient(`ws://localhost:4000/subscriptions`, {
+//   reconnect: true,
+// })
+// const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
+//   networkInterface,
+//   wsClient
+// )
 const client = new ApolloClient({
+  // networkInterface: networkInterfaceWithSubscriptions,
   cache: new InMemoryCache(),
   //  link: new HttpLink({ uri: "http://localhost:4000" }),
-  link: authLink.concat(httpLink),
+  // link: authLink.concat(httpLink),
+  link: splitLink,
 })
 
 ReactDOM.render(

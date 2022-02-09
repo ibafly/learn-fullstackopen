@@ -9,8 +9,9 @@ import {
   useMutation,
   useQuery,
   useLazyQuery,
+  useSubscription,
 } from "@apollo/client"
-import { ME, ALL_BOOKS, BOOKS_BY_GENRE, LOGIN } from "./queries"
+import { ME, ALL_BOOKS, BOOKS_BY_GENRE, LOGIN, BOOK_ADDED } from "./queries"
 
 const App = () => {
   const [page, setPage] = useState("authors")
@@ -23,7 +24,7 @@ const App = () => {
     },
     // refetchQueries: [{ query: ME }],
   })
-  const [currentUser, setCurrentUser] = useState(null)
+  // const [currentUser, setCurrentUser] = useState(null)
   const resultOfMe = useQuery(ME)
 
   const [books, setBooks] = useState([])
@@ -56,30 +57,38 @@ const App = () => {
     }
   }, [resultOfLogin.data]) // eslint-disable-line
 
+  useEffect(() => {
+    resultOfMe.refetch()
+  }, [token])
+
   const [favoriteGenreBooks, setFavoriteGenreBooks] = useState(null)
   useEffect(() => {
-    console.log(resultOfMe.data, currentUser)
-
-    if (resultOfMe.data) {
-      setCurrentUser(resultOfMe.data.me)
-    }
-    if (currentUser) {
-      booksByGenre({ variables: { genre: currentUser.favoriteGenre } })
+    console.log(resultOfMe.data)
+    if (resultOfMe.data && resultOfMe.data.me) {
+      booksByGenre({ variables: { genre: resultOfMe.data.me.favoriteGenre } })
     }
     if (resultOfBooksByGenre.data) {
       setFavoriteGenreBooks(resultOfBooksByGenre.data.allBooks)
     }
-  }, [resultOfMe.data, resultOfBooksByGenre.data, currentUser]) //eslint-disable-line
+  }, [resultOfMe.data, resultOfBooksByGenre.data]) //eslint-disable-line
 
   useEffect(() => {
     if (resultOfAllBooks.data) {
       setBooks(resultOfAllBooks.data.allBooks)
+      if (resultOfMe.data && resultOfMe.data.me) {
+        // resultOfBooksByGenre.refetch({
+        //   variables: { genre: currentUser.favoriteGenre },
+        // })
+        resultOfBooksByGenre.refetch({
+          genre: resultOfMe.data.me.favoriteGenre,
+        })
+      }
     }
   }, [resultOfAllBooks.data]) // eslint-disable-line
 
-  useEffect(() => {
-    resultOfBooksByGenre.refetch()
-  }, [books]) // eslint-disable-line
+  // useEffect(() => {
+  //   resultOfBooksByGenre.refetch()
+  // }, [books]) // eslint-disable-line
 
   const selectGenre = genre => {
     setSelectedGenre(genre)
@@ -87,7 +96,28 @@ const App = () => {
 
   useEffect(() => {
     resultOfAllBooks.refetch()
-  }, [selectGenre])
+  }, [selectedGenre]) // eslint-disable-line
+
+  const updateCacheWith = addedBook => {
+    const includedIn = (set, object) => set.map(p => p.id).includes(object.id)
+
+    const dataInStore = client.readQuery({ query: ALL_BOOKS })
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allBooks: dataInStore.allBooks.concat(addedBook) },
+      })
+    }
+  }
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded
+      // notify()
+      window.alert(`${addedBook.published} added`)
+      updateCacheWith(addedBook)
+    },
+  })
 
   const handleLogin = async (username, password) => {
     login({ variables: { username, password } })
@@ -129,13 +159,13 @@ const App = () => {
 
       <Login show={page === "login"} opAfterFormOnSubmit={handleLogin} />
 
-      {token && (
+      {token && resultOfMe.data && (
         <>
           <NewBook show={page === "add"} />
 
           <Recommend
             show={page === "recommend"}
-            currentUser={currentUser}
+            currentUser={resultOfMe.data.me}
             books={favoriteGenreBooks ? favoriteGenreBooks : null}
           />
         </>

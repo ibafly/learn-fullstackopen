@@ -1,3 +1,6 @@
+const height: number = Number(process.argv[2]) // yarn add -D @types/node to avoid complain about the `process` variable
+const weight: number = Number(process.argv[3])
+
 const calculateBmi = (height: number, weight: number): string => {
   const bmi = weight / Math.pow(height / 100, 2)
 
@@ -12,4 +15,5 @@ const calculateBmi = (height: number, weight: number): string => {
   }
 }
 
-console.log(calculateBmi(180, 74))
+// console.log(calculateBmi(180, 74))
+console.log(calculateBmi(height, weight))

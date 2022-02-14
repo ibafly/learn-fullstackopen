@@ -12,6 +12,16 @@ const calculateExercises = (
   exerciseHoursInPeriod: Array<number>,
   target: number
 ): Result => {
+  if (
+    // isNaN identifies a non-number
+    isNaN(target) ||
+    target < 0 ||
+    !Array.isArray(exerciseHoursInPeriod) ||
+    exerciseHoursInPeriod.some((hours) => isNaN(hours) || hours < 0)
+  ) {
+    throw new Error("malformatted parameters");
+  }
+
   const periodLength = exerciseHoursInPeriod.length;
   const allExerciseHours = exerciseHoursInPeriod.reduce(
     (prev, el) => prev + el,
@@ -44,9 +54,11 @@ const calculateExercises = (
   };
 };
 
-const target = Number(process.argv[2]);
-const exerciseHoursInPeriod: Array<number> = process.argv
-  .slice(3)
-  .map((arg) => Number(arg));
-// console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
-console.log(calculateExercises(exerciseHoursInPeriod, target));
+// const target = Number(process.argv[2]);
+// const exerciseHoursInPeriod: Array<number> = process.argv
+//   .slice(3)
+//   .map((arg) => Number(arg));
+// // console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+// console.log(calculateExercises(exerciseHoursInPeriod, target));
+
+export default calculateExercises;

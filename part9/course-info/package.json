@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "course-info",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -21,7 +21,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-	"lint": "eslint './src/**/*.{tsx,tx}'"
+    "lint": "eslint './src/**/*.{tsx,ts}'"
   },
   "eslintConfig": {
     "extends": [
@@ -40,5 +40,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0"
   }
 }

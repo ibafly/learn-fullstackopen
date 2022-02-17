@@ -29,4 +29,14 @@ patientsRouter.post("/", (req, res): any => {
   res.status(201).send(nonSensitivePatient);
 });
 
+patientsRouter.get("/:id", (req, res): any => {
+  const { id } = req.params;
+  const foundPatient = patientService.getOneBy(id);
+
+  if (!foundPatient) {
+    return res.status(404);
+  }
+
+  res.status(200).send(foundPatient);
+});
 export default patientsRouter;

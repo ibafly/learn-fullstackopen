@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 
 import { apiBaseUrl } from "../constants";
 import { Patient } from "../types";
-import { useStateValue } from "../state";
+import { useStateValue, updatePatient } from "../state";
 
-import { Icon } from "semantic-ui-react";
+import { Icon, SemanticICONS } from "semantic-ui-react";
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,28 +16,37 @@ const PatientPage = () => {
   const patient = patients[id];
   console.log("after patient declaration: ", patient);
 
-  useEffect(async () => {
+  useEffect(() => {
     console.log("enter useEffect");
 
-    if (patient && !patient.entries) {
-      const { data: patientFromApi } = await axios.get<Patient>(
-        `${apiBaseUrl}/patients/${id}`
-      );
+    const fetchPatient = async () => {
+      try {
+        const { data: patientFromApi } = await axios.get<Patient>(
+          `${apiBaseUrl}/patients/${id}`
+        );
 
-      console.log("in if in useEffect, before dispatch");
-      dispatch({ type: "UPDATE_PATIENT", payload: patientFromApi });
-      console.log("in if in useEffect, after dispatch ", patients);
+        console.log("in if in useEffect, before dispatch");
+        //   dispatch({ type: "UPDATE_PATIENT", payload: patientFromApi });
+        dispatch(updatePatient(patientFromApi));
+        console.log("in if in useEffect, after dispatch ", patients);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    if (patient && !patient.entries) {
+      void fetchPatient();
     }
   }, [patients]);
 
-  const genderDict = new Map([
+  const genderDict:Map<string,SemanticICONS> = new Map([
     ["female", "venus"],
     ["male", "mars"],
     ["other", "genderless"],
   ]);
 
   if (!patient) {
-    return "loading";
+    return <div>loading</div>;
   }
   return (
     <div>

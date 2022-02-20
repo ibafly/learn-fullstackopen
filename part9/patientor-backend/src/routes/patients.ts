@@ -37,6 +37,8 @@ patientsRouter.get("/:id", (req, res): any => {
     return res.status(404);
   }
 
+  console.log("get one patient: ", foundPatient);
+
   res.status(200).send(foundPatient);
 });
 export default patientsRouter;

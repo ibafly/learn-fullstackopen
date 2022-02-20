@@ -1,4 +1,5 @@
 import { NewPatient, Gender } from "./types";
+// import { Entry } from "../src/types";
 
 /* type guard */
 const isString = (text: unknown): text is string => {
@@ -10,6 +11,10 @@ const isDate = (date: string): boolean => {
 const isGender = (param: any): param is Gender => {
   return Object.values(Gender).includes(param);
 };
+
+// const isEntryType = (param: any): param is EntryType => {
+//   return Object.values(EntryType).includes(param);
+// };
 
 /* safe parsing */
 const parseName = (name: unknown): string => {

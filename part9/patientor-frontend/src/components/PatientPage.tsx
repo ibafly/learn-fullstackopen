@@ -3,14 +3,14 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 
 import { apiBaseUrl } from "../constants";
-import { Patient } from "../types";
+import { Diagnosis, Patient } from "../types";
 import { useStateValue, updatePatient } from "../state";
 
 import { Icon, SemanticICONS } from "semantic-ui-react";
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [{ patients }, dispatch] = useStateValue();
+  const [{ patients ,diagnosis}, dispatch] = useStateValue();
 
   console.log("patients from state: ", patients);
   const patient = patients[id];
@@ -63,7 +63,7 @@ const PatientPage = () => {
                 <div key={entry.id}>
                   <p>{entry.date} <em>{entry.description}</em>   </p>
                     {entry.diagnosisCodes && 
-                    <ul>{entry.diagnosisCodes.map(code=> <li key={code}>{code}</li> )}</ul>}
+                    <ul>{entry.diagnosisCodes.map(code=> <li key={code}>{code} {diagnosis[code].name}</li> )}</ul>}
                 </div>
             );
         })}

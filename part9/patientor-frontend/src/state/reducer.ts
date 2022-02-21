@@ -1,5 +1,5 @@
 import { State } from "./state";
-import { Patient } from "../types";
+import { Patient, Diagnosis } from "../types";
 
 export type Action =
   | {
@@ -13,6 +13,10 @@ export type Action =
   | {
       type: "UPDATE_PATIENT";
       payload: Patient;
+    }
+  | {
+      type: "SET_DIAGNOSIS_MAP";
+      payload: Diagnosis[];
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -22,6 +26,7 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         patients: {
           ...action.payload.reduce(
+            // use reduce to transform array to object
             (memo, patient) => ({ ...memo, [patient.id]: patient }),
             {}
           ),
@@ -43,6 +48,17 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         patients: {
           ...patientsCopy,
+        },
+      };
+    case "SET_DIAGNOSIS_MAP":
+      return {
+        ...state,
+        diagnosis: {
+          ...action.payload.reduce(
+            (memo, diagnosis) => ({ ...memo, [diagnosis.code]: diagnosis }),
+            {}
+          ),
+          ...state.diagnosis,
         },
       };
     default:
@@ -68,5 +84,12 @@ export const updatePatient = (patient: Patient): Action => {
   return {
     type: "UPDATE_PATIENT",
     payload: patient,
+  };
+};
+
+export const setDiagnosisMap = (list: Diagnosis[]): Action => {
+  return {
+    type: "SET_DIAGNOSIS_MAP",
+    payload: list,
   };
 };

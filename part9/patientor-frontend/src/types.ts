@@ -17,7 +17,7 @@ interface BaseEntry {
   description: string;
   date: string;
   specialist: string;
-  diagnosisCodes?: Array<Diagnose["code"]>;
+  diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
 enum HealthCheckRating {

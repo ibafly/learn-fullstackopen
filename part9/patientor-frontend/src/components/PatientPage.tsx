@@ -2,15 +2,16 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
+import EntryDetails from "./EntryDetails";
 import { apiBaseUrl } from "../constants";
-import { Diagnosis, Patient } from "../types";
+import {  Patient, Entry } from "../types";
 import { useStateValue, updatePatient } from "../state";
 
-import { Icon, SemanticICONS } from "semantic-ui-react";
+import { Card,Icon, SemanticICONS } from "semantic-ui-react";
 
 const PatientPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [{ patients ,diagnosis}, dispatch] = useStateValue();
+  const [{ patients}, dispatch] = useStateValue();
 
   console.log("patients from state: ", patients);
   const patient = patients[id];
@@ -39,7 +40,7 @@ const PatientPage = () => {
     }
   }, [patients]);
 
-  const genderDict:Map<string,SemanticICONS> = new Map([
+  const genderDict: Map<string, SemanticICONS> = new Map([
     ["female", "venus"],
     ["male", "mars"],
     ["other", "genderless"],
@@ -58,15 +59,12 @@ const PatientPage = () => {
       <p>occupation: {patient.occupation}</p>
       <h3>entries:</h3>
 
-        {patient.entries&&patient.entries.map(entry=>{
-            return (
-                <div key={entry.id}>
-                  <p>{entry.date} <em>{entry.description}</em>   </p>
-                    {entry.diagnosisCodes && 
-                    <ul>{entry.diagnosisCodes.map(code=> <li key={code}>{code} {diagnosis[code].name}</li> )}</ul>}
-                </div>
-            );
-        })}
+      <Card.Group>
+        {patient.entries &&
+          patient.entries.map((entry:Entry) => {
+            return <EntryDetails key={entry.id} entry={entry} />;
+          })}
+      </Card.Group>
     </div>
   );
 };

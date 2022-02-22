@@ -9,11 +9,15 @@ export type GenderOption = {
   label: string;
 };
 
+export type Option = {
+  value: string;
+  label: string;
+};
 // props for select field component
 type SelectFieldProps = {
   name: string;
   label: string;
-  options: GenderOption[];
+  options: GenderOption[]|Option[];
 };
 
 export const SelectField = ({
@@ -91,7 +95,7 @@ export const DiagnosisSelection = ({
     setFieldValue(field, data.value);
   };
 
-  const stateOptions = diagnoses.map(diagnosis => ({
+  const stateOptions = diagnoses.map((diagnosis:Diagnosis) => ({
     key: diagnosis.code,
     text: `${diagnosis.name} (${diagnosis.code})`,
     value: diagnosis.code

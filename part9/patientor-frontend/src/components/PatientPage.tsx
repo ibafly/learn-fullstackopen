@@ -1,18 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
 import EntryDetails from "./EntryDetails";
-import AddEntryForm from './AddEntryForm'
+import AddEntryForm from "./AddEntryForm";
 import { apiBaseUrl } from "../constants";
-import {  Patient, Entry,NewEntry } from "../types";
-import { useStateValue, updatePatient ,addEntry} from "../state";
+import { Patient, Entry, NewEntry } from "../types";
+import { useStateValue, updatePatient, addEntry } from "../state";
 
-import { Card,Icon, SemanticICONS } from "semantic-ui-react";
+import { Card, Icon, SemanticICONS } from "semantic-ui-react";
 
 const PatientPage = () => {
+  const [error, setError] = useState<string | undefined>();
   const { id } = useParams<{ id: string }>();
-  const [{ patients}, dispatch] = useStateValue();
+  const [{ patients }, dispatch] = useStateValue();
 
   console.log("patients from state: ", patients);
   const patient = patients[id];
@@ -47,11 +48,14 @@ const PatientPage = () => {
         `${apiBaseUrl}/patients/${id}/entries`,
         values
       );
-    //   dispatch({ type: "ADD_ENTRY", payload: {patientId:id,entry: newEntry });
-      dispatch(addEntry(id,newEntry))
+      dispatch(addEntry(id, newEntry)); // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error(e.response?.data || "Unknown Error");
-    //   setError(e.response?.data?.error || "Unknown error");
+      setError(e.response?.data?.error || "Unknown error");
+
+      setTimeout(() => {
+        setError(undefined);
+      }, 5000);
     }
   };
   const genderDict: Map<string, SemanticICONS> = new Map([
@@ -72,11 +76,11 @@ const PatientPage = () => {
       <p>ssn: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
       <h3>entries:</h3>
-      <AddEntryForm onCancel="" onSubmit={submitNewEntry} />
+      <AddEntryForm error={error} onSubmit={submitNewEntry} />
 
       <Card.Group>
         {patient.entries &&
-          patient.entries.map((entry:Entry) => {
+          patient.entries.map((entry: Entry) => {
             return <EntryDetails key={entry.id} entry={entry} />;
           })}
       </Card.Group>

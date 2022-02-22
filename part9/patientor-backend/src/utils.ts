@@ -19,6 +19,12 @@ const isIntInRange = (int: number, min: number, max: number): boolean => {
   return Array.from(Array(max - min + 1).keys(), (n) => n + min).includes(int);
   // OR use spread syntax instead of Array.from, .map instead of callback fn. eg: const range = [...Array(end - start + 1).keys()].map(x => x + start);
 };
+// const isArray = (value: any): value is Array<any> => {
+//   return Array.isArray(value);
+// };
+const isStringArray = (value: any): value is Array<string> => {
+  return Array.isArray(value) && !value.find((item) => !isString(item));
+};
 
 /* safe parsing */
 const parseName = (name: unknown): string => {
@@ -64,6 +70,12 @@ const parseHealthCheckRating = (rating: unknown): number => {
   }
   return rating;
 };
+const parseDiagnosisCodes = (codes: unknown): string[] => {
+  if (!codes || !isStringArray(codes)) {
+    throw new Error("Incorrect diagnosis code(s)");
+  }
+  return codes;
+};
 
 const toNewPatient = (obj: any): NewPatient => {
   const newPatient: NewPatient = {
@@ -84,8 +96,9 @@ const toNewEntry = (obj: any): NewEntry => {
     description: parseText(obj.description),
     date: parseDate(obj.date),
     specialist: parseName(obj.specialist),
-    // diagnosisCodes?: Array<Diagnosis["code"]>;
+    diagnosisCodes: parseDiagnosisCodes(obj.diagnosisCodes),
   };
+  obj.diagnosisCodes ? (baseEntry.diagnosisCodes = obj.diagnosisCodes) : null;
   switch (obj.type) {
     case "HealthCheck":
       newEntry = {
@@ -109,11 +122,17 @@ const toNewEntry = (obj: any): NewEntry => {
         type: "OccupationalHealthcare",
         ...baseEntry,
         employerName: parseName(obj.employerName),
-        sickLeave: {
-          startDate: parseDate(obj.sickLeave.startDate),
-          endDate: parseDate(obj.sickLeave.endDate),
-        },
+        // sickLeave: {
+        //   startDate: parseDate(obj.sickLeave.startDate),
+        //   endDate: parseDate(obj.sickLeave.endDate),
+        // },
       };
+      obj.sickLeave
+        ? (newEntry.sickLeave = {
+            startDate: parseDate(obj.sickLeave.startDate),
+            endDate: parseDate(obj.sickLeave.endDate),
+          })
+        : null;
       break;
     default:
       throw new Error("invalid entry type");

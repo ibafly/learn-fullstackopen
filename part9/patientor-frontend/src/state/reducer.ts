@@ -66,7 +66,7 @@ export const reducer = (state: State, action: Action): State => {
         },
       };
     case "ADD_ENTRY":
-      let patient = state.patients[action.payload.patientId];
+      const patient = state.patients[action.payload.patientId];
       patient.entries
         ? patient.entries.push(action.payload.entry)
         : (patient.entries = [action.payload.entry]);

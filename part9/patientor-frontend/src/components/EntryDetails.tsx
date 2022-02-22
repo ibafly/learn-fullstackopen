@@ -1,12 +1,13 @@
 import React from "react";
-import { Entry } from "../types";
+import {HealthCheckEntry,HospitalEntry,OccupationalHealthcareEntry, Entry} from "../types";
 import { assertNever } from "../utils";
 import { useStateValue } from "../state";
 
-import { Card, Icon} from "semantic-ui-react";
+import { Card, Icon } from "semantic-ui-react";
+import { SemanticCOLORS } from "semantic-ui-react/dist/commonjs/generic";
 
-const HospitalEntry = ({ entry }: { entry: Entry }) => {
-  const [{ diagnosis }] = useStateValue();
+const HospitalEntryComp = ({ entry }: { entry: HospitalEntry }) => {
+  const [{ diagnoses }] = useStateValue();
   return (
     <Card>
       <Card.Content>
@@ -23,7 +24,7 @@ const HospitalEntry = ({ entry }: { entry: Entry }) => {
           <ul>
             {entry.diagnosisCodes.map((code: string) => (
               <li key={code}>
-                {code} {diagnosis[code].name}
+                {code} {diagnoses[code].name}
               </li>
             ))}
           </ul>
@@ -32,9 +33,9 @@ const HospitalEntry = ({ entry }: { entry: Entry }) => {
     </Card>
   );
 };
-const HealthCheckEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
-  const [{ diagnosis }] = useStateValue();
-  const ratingDict: Map<number, string> = new Map([
+const HealthCheckEntryComp: React.FC<{ entry: HealthCheckEntry }> = ({ entry }) => {
+  const [{ diagnoses }] = useStateValue();
+  const ratingDict: Map<number, SemanticCOLORS> = new Map([
     [0, "green"],
     [1, "yellow"],
     [2, "orange"],
@@ -52,12 +53,14 @@ const HealthCheckEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
         <Card.Description>
           <p> {entry.description} </p>
         </Card.Description>
-        <Icon name="heart" color={ratingDict.get(entry.healthCheckRating)} />
+        {/* {entry.healthCheckRating && ( */}
+          <Icon name="heart" color={ratingDict.get(entry.healthCheckRating)} />
+        {/* )} */}
         {entry.diagnosisCodes && (
           <ul>
             {entry.diagnosisCodes.map((code: string) => (
               <li key={code}>
-                {code} {diagnosis[code].name}
+                {code} {diagnoses[code].name}
               </li>
             ))}
           </ul>
@@ -66,8 +69,8 @@ const HealthCheckEntry: React.FC<{ entry: Entry }> = ({ entry }) => {
     </Card>
   );
 };
-const OccupationalHealthcareEntry = ({ entry }: { entry: Entry }) => {
-  const [{ diagnosis }] = useStateValue();
+const OccupationalHealthcareEntryComp = ({ entry }: { entry: OccupationalHealthcareEntry }) => {
+  const [{ diagnoses }] = useStateValue();
   return (
     <Card>
       <Card.Content>
@@ -85,7 +88,7 @@ const OccupationalHealthcareEntry = ({ entry }: { entry: Entry }) => {
           <ul>
             {entry.diagnosisCodes.map((code: string) => (
               <li key={code}>
-                {code} {diagnosis[code].name}
+                {code} {diagnoses[code].name}
               </li>
             ))}
           </ul>
@@ -97,12 +100,12 @@ const OccupationalHealthcareEntry = ({ entry }: { entry: Entry }) => {
 
 const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
   switch (entry.type) {
-    case "Hospital":
-      return <HospitalEntry entry={entry} />;
     case "HealthCheck":
-      return <HealthCheckEntry entry={entry} />;
+      return <HealthCheckEntryComp entry={entry} />;
+    case "Hospital":
+      return <HospitalEntryComp entry={entry} />;
     case "OccupationalHealthcare":
-      return <OccupationalHealthcareEntry entry={entry} />;
+      return <OccupationalHealthcareEntryComp entry={entry} />;
     default:
       return assertNever(entry);
   }

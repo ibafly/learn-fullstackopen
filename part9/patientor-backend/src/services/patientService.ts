@@ -1,10 +1,11 @@
 import { v1 as uuid } from "uuid";
-import patientData from "../../data/patients.json";
+// import patientData from "../../data/patients.json";
 import patientsExtended from "../../data/patientsExtended";
-import { PublicPatient, NewPatient, Patient } from "../types";
+import { PublicPatient, NewPatient, Patient, NewEntry, Entry } from "../types";
 
-let patients: Patient[] = patientData;
+// let patients: Patient[] = patientData;
 // patients = patients.map((patient) => ({ ...patient, entries: [] }));
+let patients: Patient[] = patientsExtended;
 
 const getAll = (): PublicPatient[] => {
   return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
@@ -21,6 +22,7 @@ const getAll = (): PublicPatient[] => {
 const addNew = (patient: NewPatient): PublicPatient => {
   const newPatient = { id: uuid(), ...patient };
   patients.push(newPatient);
+  console.log("patients in addNew: ", patients);
 
   const { ssn, ...nonSensitivePatient } = newPatient;
   return nonSensitivePatient;
@@ -36,7 +38,23 @@ const getOneBy = (id: string) => {
   // printPatients();
   // const patientsExtended = printPatients();
 
-  return patientsExtended.find((patient: any) => patient.id === id);
+  return patients.find((patient: any) => patient.id === id);
 };
 
-export default { getAll, addNew, getOneBy };
+const addNewEntry = (id: string, entry: NewEntry): Entry => {
+  const newEntry = { id: uuid(), ...entry };
+
+  patients = patients.map((patient) => {
+    if (patient.id === id) {
+      patient.entries
+        ? patient.entries.push(newEntry)
+        : (patient.entries = [newEntry]);
+    }
+    return patient;
+  });
+  console.log("patients in addNewEntry: ", patients);
+
+  return newEntry;
+};
+
+export default { getAll, addNew, getOneBy, addNewEntry };

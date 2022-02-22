@@ -1,5 +1,4 @@
-import { NewPatient, Gender } from "./types";
-// import { Entry } from "../src/types";
+import { NewEntry, NewPatient, Gender } from "./types";
 
 /* type guard */
 const isString = (text: unknown): text is string => {
@@ -12,9 +11,14 @@ const isGender = (param: any): param is Gender => {
   return Object.values(Gender).includes(param);
 };
 
-// const isEntryType = (param: any): param is EntryType => {
-//   return Object.values(EntryType).includes(param);
-// };
+//--- type guard for type NewEntry
+const isInt = (value: any): value is number => {
+  return Number.isInteger(value);
+};
+const isIntInRange = (int: number, min: number, max: number): boolean => {
+  return Array.from(Array(max - min + 1).keys(), (n) => n + min).includes(int);
+  // OR use spread syntax instead of Array.from, .map instead of callback fn. eg: const range = [...Array(end - start + 1).keys()].map(x => x + start);
+};
 
 /* safe parsing */
 const parseName = (name: unknown): string => {
@@ -23,7 +27,7 @@ const parseName = (name: unknown): string => {
   }
   return name;
 };
-const parseDateOfBirth = (date: unknown): string => {
+const parseDate = (date: unknown): string => {
   if (!date || !isString(date) || !isDate(date)) {
     throw new Error("Incorrect or missing date " + date);
   }
@@ -47,11 +51,24 @@ const parseOccupation = (occupation: unknown): string => {
   }
   return occupation;
 };
+//--- paring for type NewEntry
+const parseText = (text: unknown): string => {
+  if (!text || !isString(text)) {
+    throw new Error("Incorrect or missing text");
+  }
+  return text;
+};
+const parseHealthCheckRating = (rating: unknown): number => {
+  if (!rating || !isInt(rating) || !isIntInRange(rating, 0, 3)) {
+    throw new Error("Incorrect or missing rating");
+  }
+  return rating;
+};
 
 const toNewPatient = (obj: any): NewPatient => {
   const newPatient: NewPatient = {
     name: parseName(obj.name),
-    dateOfBirth: parseDateOfBirth(obj.dateOfBirth),
+    dateOfBirth: parseDate(obj.dateOfBirth),
     ssn: parseSsn(obj.ssn),
     gender: parseGender(obj.gender),
     occupation: parseOccupation(obj.occupation),
@@ -60,4 +77,48 @@ const toNewPatient = (obj: any): NewPatient => {
   return newPatient;
 };
 
-export { toNewPatient };
+const toNewEntry = (obj: any): NewEntry => {
+  let newEntry: NewEntry;
+  const baseEntry = {
+    // type: parseType(obj.type),
+    description: parseText(obj.description),
+    date: parseDate(obj.date),
+    specialist: parseName(obj.specialist),
+    // diagnosisCodes?: Array<Diagnose["code"]>;
+  };
+  switch (obj.type) {
+    case "HealthCheck":
+      newEntry = {
+        type: "HealthCheck",
+        ...baseEntry,
+        healthCheckRating: parseHealthCheckRating(obj.healthCheckRating),
+      };
+      break;
+    case "Hospital":
+      newEntry = {
+        type: "Hospital",
+        ...baseEntry,
+        discharge: {
+          date: parseDate(obj.discharge.date),
+          criteria: parseText(obj.discharge.criteria),
+        },
+      };
+      break;
+    case "OccupationalHealthcare":
+      newEntry = {
+        type: "OccupationalHealthcare",
+        ...baseEntry,
+        employerName: parseName(obj.employerName),
+        sickLeave: {
+          startDate: parseDate(obj.sickLeave.startDate),
+          endDate: parseDate(obj.sickLeave.endDate),
+        },
+      };
+      break;
+    default:
+      throw new Error("invalid entry type");
+  }
+  return newEntry;
+};
+
+export { toNewPatient, toNewEntry };

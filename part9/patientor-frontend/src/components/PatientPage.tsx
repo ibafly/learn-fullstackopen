@@ -3,9 +3,10 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 
 import EntryDetails from "./EntryDetails";
+import AddEntryForm from './AddEntryForm'
 import { apiBaseUrl } from "../constants";
-import {  Patient, Entry } from "../types";
-import { useStateValue, updatePatient } from "../state";
+import {  Patient, Entry,NewEntry } from "../types";
+import { useStateValue, updatePatient ,addEntry} from "../state";
 
 import { Card,Icon, SemanticICONS } from "semantic-ui-react";
 
@@ -40,6 +41,19 @@ const PatientPage = () => {
     }
   }, [patients]);
 
+  const submitNewEntry = async (values: NewEntry) => {
+    try {
+      const { data: newEntry } = await axios.post<Entry>(
+        `${apiBaseUrl}/patients/${id}/entries`,
+        values
+      );
+    //   dispatch({ type: "ADD_ENTRY", payload: {patientId:id,entry: newEntry });
+      dispatch(addEntry(id,newEntry))
+    } catch (e: any) {
+      console.error(e.response?.data || "Unknown Error");
+    //   setError(e.response?.data?.error || "Unknown error");
+    }
+  };
   const genderDict: Map<string, SemanticICONS> = new Map([
     ["female", "venus"],
     ["male", "mars"],
@@ -47,7 +61,7 @@ const PatientPage = () => {
   ]);
 
   if (!patient) {
-    return <div>loading</div>;
+    return <div>loading...</div>;
   }
   return (
     <div>
@@ -58,6 +72,7 @@ const PatientPage = () => {
       <p>ssn: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
       <h3>entries:</h3>
+      <AddEntryForm onCancel="" onSubmit={submitNewEntry} />
 
       <Card.Group>
         {patient.entries &&

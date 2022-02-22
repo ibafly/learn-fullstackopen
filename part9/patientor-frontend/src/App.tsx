@@ -27,20 +27,19 @@ const App = () => {
       }
     };
 
-    const fetchDiagnosis = async () => {
+    const fetchDiagnosisMap = async () => {
       try {
         const { data: diagnosisMapFromApi } = await axios.get<Diagnosis[]>(
-          `${apiBaseUrl}/diagnosis`
+          `${apiBaseUrl}/diagnoses`
         );
         
-    console.log(diagnosisMapFromApi);
         dispatch(setDiagnosisMap(diagnosisMapFromApi));
       } catch (e) {
         console.error(e);
       }
     };
     void fetchPatientList();
-    void fetchDiagnosis();
+    void fetchDiagnosisMap();
     
   }, [dispatch]);
 

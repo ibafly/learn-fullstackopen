@@ -84,7 +84,7 @@ const toNewEntry = (obj: any): NewEntry => {
     description: parseText(obj.description),
     date: parseDate(obj.date),
     specialist: parseName(obj.specialist),
-    // diagnosisCodes?: Array<Diagnose["code"]>;
+    // diagnosisCodes?: Array<Diagnosis["code"]>;
   };
   switch (obj.type) {
     case "HealthCheck":
